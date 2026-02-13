@@ -70,13 +70,17 @@ Demonstrates measurable improvement in handling post-cutoff queries.
 Create .env:
 
 OPENAI_API_KEY=your_key
-TAVILY_API_KEY=your_key 3. Run pipeline
-python pipeline.py 4. Run API
+
+TAVILY_API_KEY=your_key 
+3. Run pipeline
+python pipeline.py 
+4. Run API
 uvicorn api:app --reload
 
 Visit:
 
 http://127.0.0.1:8000/docs
+
 🔬 Future Improvements
 
 Confidence scoring instead of binary routing
