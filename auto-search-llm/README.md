@@ -86,3 +86,8 @@ Multi-step verification
 Better temporal detection using structured heuristics
 
 Larger evaluation dataset
+
+
+
+⚠️ You must create a .env file with your own API keys. This project does not store or expose credentials.
+
