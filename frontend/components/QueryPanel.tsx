@@ -221,6 +221,9 @@ export default function QueryPanel() {
             <span>
               <strong>Latency:</strong> {result.latency}s
             </span>
+            <span>
+              <strong>Sources Used:</strong> {result.sources.length}
+            </span>
             {typeof result.confidence === "number" ? (
               <span>
                 <strong>Confidence:</strong> {result.confidence}

@@ -29,6 +29,7 @@ async def run_query_pipeline(
             serper_api_key=serper_api_key,
             max_pages=3,
             top_m=3,
+            deadline_ms=3500,
         )
         logger.info(
             "pipeline: retrieval_result_sources=%s",

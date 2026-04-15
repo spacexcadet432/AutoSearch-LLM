@@ -2,7 +2,11 @@
 
 from __future__ import annotations
 
+import logging
+
 from openai import AsyncOpenAI
+
+logger = logging.getLogger(__name__)
 
 
 async def generate_standard_answer(query: str, api_key: str) -> str:
@@ -23,7 +27,7 @@ async def generate_grounded_answer(query: str, sources: list[dict], api_key: str
     """Generate answer grounded only in retrieved source chunks."""
     client = AsyncOpenAI(api_key=api_key)
     blocks: list[str] = []
-    for index, source in enumerate(sources[:3], start=1):
+    for index, source in enumerate(sources[:2], start=1):
         chunk = (source.get("chunk_text") or "").strip()
         if not chunk:
             continue
@@ -36,16 +40,31 @@ async def generate_grounded_answer(query: str, sources: list[dict], api_key: str
             )
         )
 
+    supporting_sources: list[str] = []
+    for source in sources[2:4]:
+        url = (source.get("url") or "").strip()
+        snippet = (source.get("snippet") or "").strip()
+        if url:
+            supporting_sources.append(f"- {url}: {snippet[:220]}")
+
+    logger.info("generation: chunks_passed_to_llm=%s", len(blocks))
     if not blocks:
         return ""
 
     source_text = "\n\n".join(blocks)
+    corroboration = "\n".join(supporting_sources)
     prompt = (
-        "Answer using the provided sources as primary evidence.\n"
-        "If some details are missing, provide the best possible answer and state uncertainty.\n"
-        "Use citations like (Source 1).\n\n"
+        "Generate a clear, specific answer using the provided context.\n"
+        "List concrete developments, facts, or trends.\n"
+        "Avoid vague language such as: suggests, anticipated, may, might.\n"
+        "Use this structure:\n"
+        "1) One-sentence intro\n"
+        "2) Bullet points with concrete facts and citations\n"
+        "3) Short conclusion\n"
+        "Use citations like (Source 1), (Source 2).\n\n"
         f"Question:\n{query}\n\n"
-        f"Sources:\n{source_text}"
+        f"Primary Sources:\n{source_text}\n\n"
+        f"Additional corroboration:\n{corroboration or 'None'}"
     )
 
     response = await client.chat.completions.create(

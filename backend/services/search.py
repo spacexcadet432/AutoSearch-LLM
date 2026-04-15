@@ -34,7 +34,7 @@ async def discover_urls(
     """Discover candidate URLs from Serper search."""
     payload: dict[str, Any] = {"q": query, "num": k, "gl": "us", "hl": "en"}
     headers = {"X-API-KEY": serper_api_key, "Content-Type": "application/json"}
-    timeout = httpx.Timeout(10.0, connect=5.0)
+    timeout = httpx.Timeout(3.0, connect=3.0)
 
     try:
         async with httpx.AsyncClient(timeout=timeout, headers=headers) as client:
@@ -68,7 +68,7 @@ async def retrieve_sources(
     serper_api_key: str,
     k_search: int = 6,
     top_m: int = 3,
-    deadline_ms: int = 4500,
+    deadline_ms: int = 3500,
     max_pages: int = 3,
 ) -> list[dict[str, Any]]:
     """
@@ -95,8 +95,8 @@ async def retrieve_sources(
                 if time.monotonic() >= deadline_s:
                     return []
                 try:
-                    html = await fetch_html(candidate["url"], client=client, timeout_s=4.0)
-                    text = _truncate_words(extract_main_text(html), max_words=1200)
+                    html = await fetch_html(candidate["url"], client=client, timeout_s=3.0)
+                    text = _truncate_words(extract_main_text(html), max_words=1000)
                     if len(text) < 220:
                         snippet = (candidate.get("snippet") or "").strip()
                         title = (candidate.get("title") or "").strip()
@@ -167,8 +167,8 @@ async def retrieve_sources(
                 for chunk in page_chunks:
                     unique_urls.add(chunk.url)
 
-            # Early exit once we have enough context from multiple sources.
-            if len(unique_urls) >= 3 and len(all_chunks) >= 6:
+            # Early exit once we have enough context from at least two sources.
+            if len(unique_urls) >= 2 and len(all_chunks) >= 3:
                 break
 
         for task in pending:
