@@ -15,14 +15,19 @@ const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
 
 export default function QueryPanel() {
   const [query, setQuery] = useState("");
-  const [apiKey, setApiKey] = useState("");
+  const [openaiApiKey, setOpenaiApiKey] = useState("");
+  const [serperApiKey, setSerperApiKey] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<QueryResponse | null>(null);
 
   const canSubmit = useMemo(
-    () => query.trim().length > 1 && apiKey.trim().length > 0 && !loading,
-    [query, apiKey, loading],
+    () =>
+      query.trim().length > 1 &&
+      openaiApiKey.trim().length > 0 &&
+      serperApiKey.trim().length > 0 &&
+      !loading,
+    [query, openaiApiKey, serperApiKey, loading],
   );
 
   const onSubmit = async (event: FormEvent) => {
@@ -41,7 +46,8 @@ export default function QueryPanel() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           query: query.trim(),
-          api_key: apiKey.trim(),
+          openai_api_key: openaiApiKey.trim(),
+          serper_api_key: serperApiKey.trim(),
         }),
       });
 
@@ -77,6 +83,9 @@ export default function QueryPanel() {
         <p className="sub">
           Adaptive routing between direct LLM answer and grounded web retrieval.
         </p>
+        <p className="sub">
+          Your API keys are used only for this request and never stored.
+        </p>
 
         <form onSubmit={onSubmit} className="form">
           <label>
@@ -84,8 +93,19 @@ export default function QueryPanel() {
             <input
               type="password"
               placeholder="sk-..."
-              value={apiKey}
-              onChange={(event) => setApiKey(event.target.value)}
+              value={openaiApiKey}
+              onChange={(event) => setOpenaiApiKey(event.target.value)}
+              autoComplete="off"
+            />
+          </label>
+
+          <label>
+            Serper API Key
+            <input
+              type="password"
+              placeholder="serper-..."
+              value={serperApiKey}
+              onChange={(event) => setSerperApiKey(event.target.value)}
               autoComplete="off"
             />
           </label>

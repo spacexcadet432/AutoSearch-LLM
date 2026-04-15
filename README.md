@@ -37,7 +37,8 @@ Request body:
 ```json
 {
   "query": "What is the latest GPT-5 release timeline?",
-  "api_key": "sk-..."
+  "openai_api_key": "sk-...",
+  "serper_api_key": "serper-..."
 }
 ```
 
@@ -53,14 +54,16 @@ Response:
 }
 ```
 
-You can also pass OpenAI key through header:
+You can also pass keys through headers:
 `X-OpenAI-API-Key: sk-...`
+`X-Serper-API-Key: serper-...`
 
-## Security Notes
+## Security Notes (BYO Keys)
 
-- OpenAI key can be sent per request from frontend.
-- Backend uses key only for the current request.
-- Key is not persisted or logged by app code.
+- Both OpenAI and Serper keys are required for each request.
+- Keys are used only in request scope (in-memory), then discarded.
+- Backend does not rely on server-side stored keys.
+- Keys are not persisted or logged by app code.
 
 ## Local Setup
 
@@ -68,13 +71,6 @@ You can also pass OpenAI key through header:
 
 ```bash
 pip install -r requirements.txt
-```
-
-Create `.env`:
-```bash
-SERPER_API_KEY=your_serper_key
-# OPENAI_API_KEY is optional when frontend sends api_key per request
-OPENAI_API_KEY=optional_default_key
 ```
 
 Run:
@@ -109,15 +105,14 @@ uvicorn backend.main:app --host 0.0.0.0 --port $PORT
 ```
 
 Required env vars:
-- `SERPER_API_KEY`
-- `OPENAI_API_KEY` (optional fallback if frontend does not send key)
+- none for LLM/search provider keys (BYO keys per request)
 
 ### Render (Backend + Frontend together)
 
 - This repo includes `render.yaml` for a Render Blueprint deployment.
 - In Render, create a new Blueprint and point to this repository.
 - Set environment variables in Render dashboard:
-  - Backend: `SERPER_API_KEY`, optional `OPENAI_API_KEY`
+  - Backend: no provider key env vars required
   - Frontend: `NEXT_PUBLIC_BACKEND_URL` (set to your backend Render URL)
 - Backend start command is already configured as:
   - `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`

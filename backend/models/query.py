@@ -9,9 +9,13 @@ class QueryRequest(BaseModel):
     """Incoming request body for adaptive query endpoint."""
 
     query: str = Field(..., min_length=2, description="User question")
-    api_key: str | None = Field(
+    openai_api_key: str | None = Field(
         default=None,
-        description="Optional OpenAI API key supplied by user per request.",
+        description="OpenAI API key supplied per request.",
+    )
+    serper_api_key: str | None = Field(
+        default=None,
+        description="Serper API key supplied per request.",
     )
 
 

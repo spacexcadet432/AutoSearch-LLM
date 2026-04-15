@@ -12,16 +12,19 @@ from chunking import chunk_text
 from ranker import CandidateChunk, score_chunks, select_top_chunks
 
 from backend.services.scraper import extract_main_text, fetch_html
-from backend.utils.config import get_serper_api_key
 
 SERPER_ENDPOINT = "https://google.serper.dev/search"
 
 
-async def discover_urls(query: str, k: int = 8) -> list[dict[str, str | None]]:
+async def discover_urls(
+    query: str,
+    *,
+    serper_api_key: str,
+    k: int = 8,
+) -> list[dict[str, str | None]]:
     """Discover candidate URLs from Serper search."""
-    api_key = get_serper_api_key()
     payload: dict[str, Any] = {"q": query, "num": k, "gl": "us", "hl": "en"}
-    headers = {"X-API-KEY": api_key, "Content-Type": "application/json"}
+    headers = {"X-API-KEY": serper_api_key, "Content-Type": "application/json"}
     timeout = httpx.Timeout(10.0, connect=5.0)
 
     try:
@@ -53,6 +56,7 @@ async def discover_urls(query: str, k: int = 8) -> list[dict[str, str | None]]:
 async def retrieve_sources(
     query: str,
     *,
+    serper_api_key: str,
     k_search: int = 8,
     top_m: int = 6,
     deadline_ms: int = 5000,
@@ -66,7 +70,7 @@ async def retrieve_sources(
     deadline_s = start + (deadline_ms / 1000.0)
 
     try:
-        candidates = await discover_urls(query, k=k_search)
+        candidates = await discover_urls(query, serper_api_key=serper_api_key, k=k_search)
     except RuntimeError:
         return []
     if not candidates:
