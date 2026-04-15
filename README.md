@@ -1,99 +1,137 @@
-AutoSearch-LLM
-Temporal-Aware LLM Router with Automatic Web Grounding
-🚨 Problem
+# AutoSearch-LLM
 
-Large Language Models suffer from knowledge cutoff blindness.
-They confidently answer time-sensitive questions using outdated training data.
+Adaptive LLM routing system that decides whether a query should be answered directly or grounded using live web retrieval.
 
-Example:
+## Architecture
 
-Asking in 2026 about a 2025 release
+`User Query -> Temporal Classifier -> (Direct Answer | Web Search + Scrape + Rank + Grounded Generation)`
 
-Model answers using 2022 information
+Backend structure:
 
-Only correct after forced web search
+`backend/main.py`
+- FastAPI app setup and middleware
 
-Users must manually request web search — this is broken UX.
+`backend/routes/query.py`
+- `POST /query` endpoint
 
-💡 Solution
+`backend/services/routing.py`
+- Temporal routing decision with confidence
 
-AutoSearch-LLM is a lightweight routing layer that:
+`backend/services/search.py`
+- URL discovery, deduplication, async scraping pipeline, ranking
 
-Detects if a query requires up-to-date information
+`backend/services/scraper.py`
+- HTML fetch + readability extraction
 
-Automatically triggers web search when necessary
+`backend/services/generator.py`
+- Direct and grounded LLM generation
 
-Forces the LLM to answer using only verified live sources
+`backend/models/query.py`
+- Request/response schemas
 
-Returns grounded answers with citations
+## API Contract
 
-No retraining. Tool-augmented architecture with async retrieval.
+### `POST /query`
 
-🧠 Architecture
+Request body:
+```json
+{
+  "query": "What is the latest GPT-5 release timeline?",
+  "api_key": "sk-..."
+}
+```
 
-User Query
-↓
-Temporal Classifier
-↓
-If time-sensitive → URL Discovery (Serper API)
-↓
-Async Scrape + Readability Extraction
-↓
-Chunking + Ranking (grounding sources)
-↓
-Grounded Answer Generator (OpenAI)
-↓
-Final Response (with sources)
+Response:
+```json
+{
+  "answer": "...",
+  "used_search": true,
+  "sources": ["https://..."],
+  "latency": 2.184,
+  "routing_decision": "search",
+  "confidence": 0.91
+}
+```
 
-⚙️ Features
+You can also pass OpenAI key through header:
+`X-OpenAI-API-Key: sk-...`
 
-Temporal query classification
+## Security Notes
 
-Automatic web search routing (time-sensitive -> grounding)
+- OpenAI key can be sent per request from frontend.
+- Backend uses key only for the current request.
+- Key is not persisted or logged by app code.
 
-Async scraping + readability-based content extraction
+## Local Setup
 
-Chunking + lexical relevance ranking (diversity-aware)
+### 1) Backend
 
-Source-grounded answer generation
+```bash
+pip install -r requirements.txt
+```
 
-REST API (FastAPI)
+Create `.env`:
+```bash
+SERPER_API_KEY=your_serper_key
+# OPENAI_API_KEY is optional when frontend sends api_key per request
+OPENAI_API_KEY=optional_default_key
+```
 
-Benchmark evaluation script
+Run:
+```bash
+uvicorn backend.main:app --reload
+```
 
-📊 Evaluation
+### 2) Frontend (Next.js)
 
-Tested on mixed time-sensitive and timeless queries.
+```bash
+cd frontend
+npm install
+```
 
-Routing Accuracy: 80% (4/5 correct decisions)
+Create `frontend/.env.local`:
+```bash
+NEXT_PUBLIC_BACKEND_URL=http://localhost:8000
+```
 
-Demonstrates measurable improvement in handling post-cutoff queries.
+Run:
+```bash
+npm run dev
+```
 
-🚀 How to Run
+## Deployment
 
-1. Install dependencies
-   pip install -r requirements.txt
-2. Add API keys
+### Backend (Railway / Render / Fly.io)
 
-Create a `.env`:
+Start command:
+```bash
+uvicorn backend.main:app --host 0.0.0.0 --port $PORT
+```
 
-OPENAI_API_KEY=your_key
-SERPER_API_KEY=your_key
+Required env vars:
+- `SERPER_API_KEY`
+- `OPENAI_API_KEY` (optional fallback if frontend does not send key)
 
-3. Run pipeline
-python pipeline.py
-4. Run API
-uvicorn api:app --reload
+### Render (Backend + Frontend together)
 
-Visit:
+- This repo includes `render.yaml` for a Render Blueprint deployment.
+- In Render, create a new Blueprint and point to this repository.
+- Set environment variables in Render dashboard:
+  - Backend: `SERPER_API_KEY`, optional `OPENAI_API_KEY`
+  - Frontend: `NEXT_PUBLIC_BACKEND_URL` (set to your backend Render URL)
+- Backend start command is already configured as:
+  - `uvicorn backend.main:app --host 0.0.0.0 --port $PORT`
 
-http://127.0.0.1:8000/docs
-🔬 Future Improvements
+### Frontend (Vercel)
 
-Confidence scoring instead of binary routing
+- Import `frontend/` as Vercel project.
+- Set env var:
+  - `NEXT_PUBLIC_BACKEND_URL=https://<your-backend-domain>`
 
-Multi-step verification
+## Recruiter Demo Highlights
 
-Better temporal detection using structured heuristics
-
-Larger evaluation dataset
+- Adaptive LLM + retrieval routing
+- Real-time grounding with source citations
+- Async scraping and ranking
+- Per-request API key handling
+- Full-stack app with deployable frontend/backend split
