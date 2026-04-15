@@ -33,7 +33,7 @@ async def generate_grounded_answer(query: str, sources: list[dict], api_key: str
             continue
         blocks.append(
             (
-                f"Source {index}\n"
+                f"Context Block {index}\n"
                 f"Title: {source.get('title') or 'N/A'}\n"
                 f"URL: {source.get('url')}\n"
                 f"Chunk: {chunk[:900]}"
@@ -54,16 +54,18 @@ async def generate_grounded_answer(query: str, sources: list[dict], api_key: str
     source_text = "\n\n".join(blocks)
     corroboration = "\n".join(supporting_sources)
     prompt = (
-        "Generate a clear, specific answer using the provided context.\n"
-        "List concrete developments, facts, or trends.\n"
+        "Combine insights from all context blocks into one clear, non-redundant answer.\n"
+        "Write as a unified explanation, not as separate source summaries.\n"
+        "Do not repeat similar points; merge overlapping ideas into one stronger statement.\n"
+        "Do not mention labels like Source 1, Source 2, or Context Block in the final answer.\n"
+        "Do not include inline citations in the answer.\n"
         "Avoid vague language such as: suggests, anticipated, may, might.\n"
         "Use this structure:\n"
-        "1) One-sentence intro\n"
-        "2) Bullet points with concrete facts and citations\n"
-        "3) Short conclusion\n"
-        "Use citations like (Source 1), (Source 2).\n\n"
+        "1) Short 1-2 line overview\n"
+        "2) Key developments as concise bullet points (non-redundant)\n"
+        "3) Optional short conclusion if it adds value\n\n"
         f"Question:\n{query}\n\n"
-        f"Primary Sources:\n{source_text}\n\n"
+        f"Primary Context:\n{source_text}\n\n"
         f"Additional corroboration:\n{corroboration or 'None'}"
     )
 
