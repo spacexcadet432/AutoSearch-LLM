@@ -23,20 +23,26 @@ async def generate_grounded_answer(query: str, sources: list[dict], api_key: str
     """Generate answer grounded only in retrieved source chunks."""
     client = AsyncOpenAI(api_key=api_key)
     blocks: list[str] = []
-    for index, source in enumerate(sources[:5], start=1):
+    for index, source in enumerate(sources[:3], start=1):
+        chunk = (source.get("chunk_text") or "").strip()
+        if not chunk:
+            continue
         blocks.append(
             (
                 f"Source {index}\n"
                 f"Title: {source.get('title') or 'N/A'}\n"
                 f"URL: {source.get('url')}\n"
-                f"Chunk: {(source.get('chunk_text') or '')[:1000]}"
+                f"Chunk: {chunk[:900]}"
             )
         )
 
+    if not blocks:
+        return ""
+
     source_text = "\n\n".join(blocks)
     prompt = (
-        "You must answer ONLY from provided sources.\n"
-        "If information is missing, say: Insufficient verified information.\n"
+        "Answer using the provided sources as primary evidence.\n"
+        "If some details are missing, provide the best possible answer and state uncertainty.\n"
         "Use citations like (Source 1).\n\n"
         f"Question:\n{query}\n\n"
         f"Sources:\n{source_text}"

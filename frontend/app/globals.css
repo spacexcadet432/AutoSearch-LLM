@@ -182,6 +182,25 @@ textarea {
   transition: transform 0.15s ease, filter 0.15s ease;
 }
 
+.actionsRow {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.clearBtn {
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--muted);
+  font-weight: 600;
+  padding: 12px 14px;
+}
+
+.clearBtn:hover:not(:disabled) {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
 .submitBtn:hover:not(:disabled) {
   transform: translateY(-1px);
   filter: brightness(1.06);

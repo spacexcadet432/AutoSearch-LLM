@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 type QueryResponse = {
   answer: string;
@@ -29,6 +29,17 @@ export default function QueryPanel() {
       !loading,
     [query, openaiApiKey, serperApiKey, loading],
   );
+
+  useEffect(() => {
+    const storedOpenaiKey = sessionStorage.getItem("openai_api_key") || "";
+    const storedSerperKey = sessionStorage.getItem("serper_api_key") || "";
+    if (storedOpenaiKey) {
+      setOpenaiApiKey(storedOpenaiKey);
+    }
+    if (storedSerperKey) {
+      setSerperApiKey(storedSerperKey);
+    }
+  }, []);
 
   const onSubmit = async (event: FormEvent) => {
     event.preventDefault();
@@ -76,6 +87,23 @@ export default function QueryPanel() {
     }
   };
 
+  const onOpenAiChange = (value: string) => {
+    setOpenaiApiKey(value);
+    sessionStorage.setItem("openai_api_key", value);
+  };
+
+  const onSerperChange = (value: string) => {
+    setSerperApiKey(value);
+    sessionStorage.setItem("serper_api_key", value);
+  };
+
+  const clearKeys = () => {
+    setOpenaiApiKey("");
+    setSerperApiKey("");
+    sessionStorage.removeItem("openai_api_key");
+    sessionStorage.removeItem("serper_api_key");
+  };
+
   return (
     <main className="container">
       <section className="hero card">
@@ -103,7 +131,7 @@ export default function QueryPanel() {
                 type="password"
                 placeholder="sk-..."
                 value={openaiApiKey}
-                onChange={(event) => setOpenaiApiKey(event.target.value)}
+                onChange={(event) => onOpenAiChange(event.target.value)}
                 autoComplete="off"
               />
             </label>
@@ -117,7 +145,7 @@ export default function QueryPanel() {
                 type="password"
                 placeholder="Enter your Serper API key"
                 value={serperApiKey}
-                onChange={(event) => setSerperApiKey(event.target.value)}
+                onChange={(event) => onSerperChange(event.target.value)}
                 autoComplete="off"
               />
             </label>
@@ -135,20 +163,31 @@ export default function QueryPanel() {
               onChange={(event) => setQuery(event.target.value)}
             />
             <span className="helperText">
-              Keys are used only for this request and never stored.
+              Keys are stored only for this session and cleared when you close the
+              tab.
             </span>
           </label>
 
-          <button className="submitBtn" type="submit" disabled={!canSubmit}>
-            {loading ? (
-              <span className="btnLoading">
-                <span className="spinner" />
-                Processing...
-              </span>
-            ) : (
-              "Run Adaptive Query"
-            )}
-          </button>
+          <div className="actionsRow">
+            <button className="submitBtn" type="submit" disabled={!canSubmit}>
+              {loading ? (
+                <span className="btnLoading">
+                  <span className="spinner" />
+                  Processing...
+                </span>
+              ) : (
+                "Run Adaptive Query"
+              )}
+            </button>
+            <button
+              className="clearBtn"
+              type="button"
+              onClick={clearKeys}
+              disabled={loading}
+            >
+              Clear Keys
+            </button>
+          </div>
         </form>
       </section>
 

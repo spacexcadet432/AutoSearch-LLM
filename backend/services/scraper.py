@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from html import unescape
 
 import httpx
 from bs4 import BeautifulSoup
@@ -17,8 +18,9 @@ USER_AGENT = (
 
 def _clean_text(text: str) -> str:
     text = text.replace("\u00a0", " ")
+    text = unescape(text)
     text = re.sub(r"[ \t]+", " ", text)
-    text = re.sub(r"\n{3,}", "\n\n", text)
+    text = re.sub(r"\n{4,}", "\n\n\n", text)
     return text.strip()
 
 
@@ -29,13 +31,21 @@ def extract_main_text(html: str) -> str:
         summary_html = doc.summary()
         soup = BeautifulSoup(summary_html, "lxml")
         text = _clean_text(soup.get_text(separator="\n"))
-        if len(text) > 250:
+        if len(text) > 200:
             return text
     except Exception:
         pass
 
     soup = BeautifulSoup(html, "lxml")
-    return _clean_text(soup.get_text(separator="\n"))
+    for tag in soup(["script", "style", "noscript"]):
+        tag.decompose()
+    fallback_text = _clean_text(soup.get_text(separator="\n"))
+    if fallback_text:
+        return fallback_text
+
+    # Last fallback for malformed HTML where parser extraction is poor.
+    stripped = re.sub(r"<[^>]+>", " ", html)
+    return _clean_text(stripped)
 
 
 async def fetch_html(
