@@ -78,68 +78,103 @@ export default function QueryPanel() {
 
   return (
     <main className="container">
+      <section className="hero card">
+        <span className="demoBadge">AI Routing Demo</span>
+        <h1>AutoSearch-LLM - Adaptive AI with Real-Time Web Grounding</h1>
+        <p className="subtitle">
+          Dynamically routes queries between LLM knowledge and live web retrieval.
+        </p>
+        <p className="featureLine">
+          <span>No hallucinations</span>
+          <span>Real-time data</span>
+          <span>Bring your own API keys</span>
+        </p>
+      </section>
+
       <section className="card">
-        <h1>AutoSearch-LLM</h1>
-        <p className="sub">
-          Adaptive routing between direct LLM answer and grounded web retrieval.
-        </p>
-        <p className="sub">
-          Your API keys are used only for this request and never stored.
-        </p>
-
         <form onSubmit={onSubmit} className="form">
-          <label>
-            OpenAI API Key
-            <input
-              type="password"
-              placeholder="sk-..."
-              value={openaiApiKey}
-              onChange={(event) => setOpenaiApiKey(event.target.value)}
-              autoComplete="off"
-            />
-          </label>
+          <div className="inputGrid">
+            <label className="inputCard">
+              <span className="labelTitle">
+                <span className="labelIcon">OA</span>
+                OpenAI API Key
+              </span>
+              <input
+                type="password"
+                placeholder="sk-..."
+                value={openaiApiKey}
+                onChange={(event) => setOpenaiApiKey(event.target.value)}
+                autoComplete="off"
+              />
+            </label>
 
-          <label>
-            Serper API Key
-            <input
-              type="password"
-              placeholder="serper-..."
-              value={serperApiKey}
-              onChange={(event) => setSerperApiKey(event.target.value)}
-              autoComplete="off"
-            />
-          </label>
+            <label className="inputCard">
+              <span className="labelTitle">
+                <span className="labelIcon">SP</span>
+                Serper API Key
+              </span>
+              <input
+                type="password"
+                placeholder="Enter your Serper API key"
+                value={serperApiKey}
+                onChange={(event) => setSerperApiKey(event.target.value)}
+                autoComplete="off"
+              />
+            </label>
+          </div>
 
-          <label>
-            Query
+          <label className="inputCard">
+            <span className="labelTitle">
+              <span className="labelIcon">Q</span>
+              Query
+            </span>
             <textarea
-              rows={5}
-              placeholder="Ask a question..."
+              rows={7}
+              placeholder="Ask anything... (e.g., What happened in AI this week?)"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
             />
+            <span className="helperText">
+              Keys are used only for this request and never stored.
+            </span>
           </label>
 
-          <button type="submit" disabled={!canSubmit}>
-            {loading ? "Processing..." : "Submit"}
+          <button className="submitBtn" type="submit" disabled={!canSubmit}>
+            {loading ? (
+              <span className="btnLoading">
+                <span className="spinner" />
+                Processing...
+              </span>
+            ) : (
+              "Run Adaptive Query"
+            )}
           </button>
         </form>
       </section>
 
       {error && (
-        <section className="card error">
+        <section className="card errorCard">
           <p>{error}</p>
         </section>
       )}
 
+      {loading && (
+        <section className="card loadingCard">
+          <div className="loadingPulse" />
+          <div className="loadingPulse short" />
+          <div className="loadingPulse" />
+        </section>
+      )}
+
       {result && (
-        <section className="card">
+        <section className="card resultCard">
           <h2>Answer</h2>
           <p className="answer">{result.answer}</p>
 
           <div className="meta">
             <span>
-              <strong>Used Search:</strong> {String(result.used_search)}
+              <strong>Routing:</strong>{" "}
+              {result.used_search ? "Used Web Search" : "Answered from Model"}
             </span>
             <span>
               <strong>Routing Decision:</strong> {result.routing_decision}
@@ -158,10 +193,11 @@ export default function QueryPanel() {
           {result.sources.length === 0 ? (
             <p className="sub">No sources returned.</p>
           ) : (
-            <ul>
+            <ul className="sourcesList">
               {result.sources.map((url) => (
                 <li key={url}>
                   <a href={url} target="_blank" rel="noreferrer">
+                    <span className="sourceIcon">link</span>
                     {url}
                   </a>
                 </li>
