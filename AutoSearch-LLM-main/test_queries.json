@@ -1,0 +1,22 @@
+[
+  {
+    "query": "Stranger Things season 5 release date?",
+    "expected_type": "time_sensitive"
+  },
+  {
+    "query": "Who is the current CEO of Google?",
+    "expected_type": "time_sensitive"
+  },
+  {
+    "query": "What is the capital of France?",
+    "expected_type": "timeless"
+  },
+  {
+    "query": "Explain overfitting in machine learning.",
+    "expected_type": "timeless"
+  },
+  {
+    "query": "Who won the FIFA World Cup 2022?",
+    "expected_type": "time_sensitive"
+  }
+]

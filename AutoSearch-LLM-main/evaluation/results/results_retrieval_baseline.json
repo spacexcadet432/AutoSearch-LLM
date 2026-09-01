@@ -1,0 +1,1051 @@
+{
+  "metadata": {
+    "timestamp_utc": "2026-09-01T14:07:35+00:00",
+    "provider": "bedrock",
+    "llm_endpoint": "https://bedrock-runtime.us-east-1.amazonaws.com/openai/v1 :: openai.gpt-oss-120b-1:0",
+    "model": "openai.gpt-oss-120b-1:0",
+    "dataset_version": "1.0",
+    "dataset_cases": 44,
+    "stages": [
+      "retrieval"
+    ],
+    "router_repeats": 0,
+    "latency_repeats": 0,
+    "concurrency": 4,
+    "python": "3.14.6",
+    "platform": "Windows",
+    "llm_exercised": false,
+    "preflight": {
+      "provider": "bedrock",
+      "llm_endpoint": "https://bedrock-runtime.us-east-1.amazonaws.com/openai/v1 :: openai.gpt-oss-120b-1:0",
+      "llm_ok": null,
+      "serper_ok": true,
+      "serper_probe_ms": 1266.9,
+      "serper_organic_results": 1
+    },
+    "wall_clock_s": 13.5
+  },
+  "warnings": [],
+  "retrieval_metrics": {
+    "n_queries": 15,
+    "n_errors": 0,
+    "errors": [],
+    "retrieval_success_rate": 0.8,
+    "n_returned_sources": 12,
+    "n_returned_nothing": 3,
+    "failure_reasons": {
+      "no_extractable_content": 3
+    },
+    "page_fetch_outcomes": {
+      "extracted": 18,
+      "snippet_fallback": 4,
+      "fetch_error": 3
+    },
+    "sources_per_query": {
+      "n": 12,
+      "mean": 2.08,
+      "median": 2.0,
+      "min": 2,
+      "max": 3
+    },
+    "domains_per_query": {
+      "n": 12,
+      "mean": 1.92,
+      "median": 2.0,
+      "min": 1,
+      "max": 3
+    },
+    "single_domain_queries": 2,
+    "topical_keyword_proxy": {
+      "query_level_hit_rate": 1.0,
+      "chunk_level_hit_rate": 1.0,
+      "rank1_hit_rate": 1.0,
+      "n_chunks_scored": 25,
+      "note": "Weak proxy: keyword presence, NOT a human relevance judgement."
+    },
+    "latency": {
+      "n": 15,
+      "mean_ms": 3286.1,
+      "median_ms": 3521.1,
+      "p95_ms": 3958.1,
+      "min_ms": 1971.5,
+      "max_ms": 3990.7,
+      "stdev_ms": 618.3,
+      "p95_reliable": false
+    },
+    "stage_latency": {
+      "discover_ms": {
+        "n": 15,
+        "mean_ms": 2019.7,
+        "median_ms": 1969.3,
+        "p95_ms": 2885.7,
+        "min_ms": 1538.4,
+        "max_ms": 3363.2,
+        "stdev_ms": 485.8,
+        "p95_reliable": false
+      },
+      "fetch_ms": {
+        "n": 15,
+        "mean_ms": 1263.0,
+        "median_ms": 1513.0,
+        "p95_ms": 1995.0,
+        "min_ms": 138.3,
+        "max_ms": 2035.2,
+        "stdev_ms": 663.6,
+        "p95_reliable": false
+      },
+      "rank_ms": {
+        "n": 12,
+        "mean_ms": 2.5,
+        "median_ms": 1.2,
+        "p95_ms": 7.9,
+        "min_ms": 0.3,
+        "max_ms": 8.0,
+        "stdev_ms": 2.7,
+        "p95_reliable": false
+      }
+    },
+    "per_query": [
+      {
+        "id": "ts-02",
+        "query": "What is the current price of Bitcoin in USD?",
+        "n_sources": 2,
+        "n_domains": 2,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 3512.1,
+        "urls": [
+          "https://coinmarketcap.com/currencies/bitcoin/",
+          "https://finance.yahoo.com/quote/BTC-USD/"
+        ]
+      },
+      {
+        "id": "ts-04",
+        "query": "What is the current stock price of NVIDIA?",
+        "n_sources": 2,
+        "n_domains": 2,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 3521.1,
+        "urls": [
+          "https://finance.yahoo.com/quote/NVDA/",
+          "https://www.nasdaq.com/market-activity/stocks/nvda"
+        ]
+      },
+      {
+        "id": "ts-06",
+        "query": "What is the latest stable release version of Python?",
+        "n_sources": 2,
+        "n_domains": 2,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 1971.5,
+        "urls": [
+          "https://www.reddit.com/r/Python/comments/1qgt083/python_version_in_production/",
+          "https://www.python.org/downloads/"
+        ]
+      },
+      {
+        "id": "ts-08",
+        "query": "What is the current USD to Japanese Yen exchange rate?",
+        "n_sources": 2,
+        "n_domains": 2,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 3339.3,
+        "urls": [
+          "https://www.xe.com/currencyconverter/convert/?Amount=1&From=USD&To=JPY",
+          "https://wise.com/us/currency-converter/usd-to-jpy-rate"
+        ]
+      },
+      {
+        "id": "ru-01",
+        "query": "What is the latest version of the Linux kernel?",
+        "n_sources": 2,
+        "n_domains": 2,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 2077.9,
+        "urls": [
+          "https://www.kernel.org/",
+          "https://www.reddit.com/r/linuxquestions/comments/1ly1133/which_distro_uses_the_most_uptodate_kernel/"
+        ]
+      },
+      {
+        "id": "ru-02",
+        "query": "What is the current status of NASA's Artemis program?",
+        "n_sources": 2,
+        "n_domains": 1,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 2477.5,
+        "urls": [
+          "https://www.nasa.gov/humans-in-space/artemis/",
+          "https://www.nasa.gov/blogs/artemis/"
+        ]
+      },
+      {
+        "id": "ru-03",
+        "query": "What is the current inflation rate in the United States?",
+        "n_sources": 2,
+        "n_domains": 2,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 3134.7,
+        "urls": [
+          "https://ycharts.com/indicators/us_inflation_rate",
+          "https://tradingeconomics.com/united-states/inflation-cpi"
+        ]
+      },
+      {
+        "id": "ru-05",
+        "query": "What is the current world record for the men's marathon?",
+        "n_sources": 2,
+        "n_domains": 2,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 3542.2,
+        "urls": [
+          "https://en.wikipedia.org/wiki/Marathon_world_record_progression",
+          "https://www.runnersworld.com/races-places/a20823734/these-are-the-worlds-fastest-marathoners-and-marathon-courses/"
+        ]
+      },
+      {
+        "id": "ru-07",
+        "query": "What are the latest discoveries from the James Webb Space Telescope?",
+        "n_sources": 3,
+        "n_domains": 3,
+        "on_topic_chunks": 3,
+        "rank1_on_topic": true,
+        "latency_ms": 3546.7,
+        "urls": [
+          "https://esawebb.org/news/",
+          "https://carnegiescience.edu/six-wild-discoveries-jwst",
+          "https://science.nasa.gov/mission/webb/latestnews/"
+        ]
+      },
+      {
+        "id": "trap-06",
+        "query": "Who is the CEO of Twitter?",
+        "n_sources": 2,
+        "n_domains": 2,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 3990.7,
+        "urls": [
+          "https://apnews.com/article/twitter-musk-new-ceo-a5df68e9a1e5f982368390c73aeabb50",
+          "https://en.wikipedia.org/wiki/Twitter,_Inc."
+        ]
+      },
+      {
+        "id": "trap-07",
+        "query": "How much does a Tesla Model 3 cost?",
+        "n_sources": 2,
+        "n_domains": 2,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 3944.1,
+        "urls": [
+          "https://www.reddit.com/r/TeslaLounge/comments/1s3hsx6/tesla_model_3_5_years_later_real_costs_range_and/",
+          "https://www.tesla.com/model3"
+        ]
+      },
+      {
+        "id": "trap-08",
+        "query": "What is the latest iPhone model?",
+        "n_sources": 2,
+        "n_domains": 1,
+        "on_topic_chunks": 2,
+        "rank1_on_topic": true,
+        "latency_ms": 3524.8,
+        "urls": [
+          "https://www.apple.com/iphone/",
+          "https://www.apple.com/iphone-17/"
+        ]
+      }
+    ]
+  },
+  "retrieval_records": [
+    {
+      "id": "ts-02",
+      "query": "What is the current price of Bitcoin in USD?",
+      "category": "time_sensitive_explicit",
+      "keywords": [
+        "bitcoin",
+        "btc"
+      ],
+      "sources": [
+        {
+          "url": "https://coinmarketcap.com/currencies/bitcoin/",
+          "title": "Bitcoin price today, BTC to USD live price, marketcap ...",
+          "snippet": "The live Bitcoin price today is $77811.40 USD with a 24-hour trading volume of $30478910841.04 USD. We update our BTC to USD price in real-time.",
+          "chunk_index": 0,
+          "chunk_text": "Bitcoin is a decentralized cryptocurrency originally described in a 2008 whitepaper by a person, or group of people, using the alias Satoshi Nakamoto . It was launched soon after, in January 2009. Bitcoin is a peer-to-peer online currency, meaning that all transactions happen directly between equal, independent network participants, without the need for any intermediary to permit or facilitate them. Bitcoin was created, according to Nakamoto’s own words, to allow “online payments to be sent directly from one party to another without going through a financial institution.” Some concepts for a s"
+        },
+        {
+          "url": "https://finance.yahoo.com/quote/BTC-USD/",
+          "title": "Bitcoin BTC (BTC-USD) Live Price, News, Chart & ...",
+          "snippet": "Bitcoin (BTC-USD) continues to hover just below $80,000 per token as investors continue to monitor crypto's latest comeback. Mizuho Americas ...",
+          "chunk_index": 0,
+          "chunk_text": "Bitcoin (BTC-USD) continues to hover just below $80,000 per token as investors continue to monitor crypto's latest comeback. Mizuho Americas ..."
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://coinmarketcap.com/currencies/bitcoin/",
+            "outcome": "extracted",
+            "text_len": 6291,
+            "chunks": 1
+          }
+        ],
+        "discover_ms": 2383.1,
+        "fetch_ms": 1124.8,
+        "pages_yielding_chunks": 1,
+        "chunks_extracted": 1,
+        "rank_ms": 3.7,
+        "top_scores": [
+          3.78
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 2,
+        "total_ms": 3511.7
+      },
+      "latency_ms": 3512.1,
+      "error": null
+    },
+    {
+      "id": "ts-04",
+      "query": "What is the current stock price of NVIDIA?",
+      "category": "time_sensitive_explicit",
+      "keywords": [
+        "nvidia",
+        "nvda"
+      ],
+      "sources": [
+        {
+          "url": "https://finance.yahoo.com/quote/NVDA/",
+          "title": "NVIDIA Corporation (NVDA) Stock Price, News, Quote & ...",
+          "snippet": "Analyst Price Targets 180.00 323.42 Average 220.78 Current 515.00 High Analyst Recommendations Strong … s Current Quarterly Annual As of 8/27/2026",
+          "chunk_index": 0,
+          "chunk_text": "NVDA\n \nNVIDIA Corporation\n \n \n \n217.87 \n \n-1.19%\n \n \n \n \n \n \n \n \n \n \nNasdaqGS - Nasdaq Real Time Price\n \n•\n \nUSD\n \n \nNVIDIA Corporation (NVDA)\n \n \n \n \n \n \n \n \n \n217.87 \n \n-2.63 \n \n(-1.19%) \n \n \nAs of 10:07:23 AM EDT. Market Open. \n \n \n \n \n \n \n \n \n \n \n \nNVDA announced a cash dividend of $0.25 with an ex-date of Sep. 10, 2026 \n \n \n \n \n \n \n \n \n \nPrevious Close\n \n \n220.50 \n \n \nOpen\n \n \n216.61 \n \n \nBid\n \n \n216.84 x 100\n \n \nAsk\n \n \n217.56 x 200\n \n \nDay's Range\n \n \n215.10 - 217.97 \n \n \n52 Week Range\n \n \n164.07 - 236.54 \n \n \nVolume\n \n \n22,263,583 \n \n \nAvg. Volume\n \n \n138,830,287 \n \n \nMarket Cap (intra"
+        },
+        {
+          "url": "https://www.nasdaq.com/market-activity/stocks/nvda",
+          "title": "NVIDIA Corporation Common Stock (NVDA)",
+          "snippet": "Discover real-time NVIDIA Corporation Common Stock (NVDA) stock prices, quotes, historical data, news, and Insights for informed trading and investment ...",
+          "chunk_index": 0,
+          "chunk_text": "Discover real-time NVIDIA Corporation Common Stock (NVDA) stock prices, quotes, historical data, news, and Insights for informed trading and investment ..."
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://finance.yahoo.com/quote/NVDA/",
+            "outcome": "extracted",
+            "text_len": 1737,
+            "chunks": 1
+          }
+        ],
+        "discover_ms": 1541.6,
+        "fetch_ms": 1977.7,
+        "pages_yielding_chunks": 1,
+        "chunks_extracted": 1,
+        "rank_ms": 1.0,
+        "top_scores": [
+          3.8004
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 2,
+        "total_ms": 3520.6
+      },
+      "latency_ms": 3521.1,
+      "error": null
+    },
+    {
+      "id": "ts-05",
+      "query": "Who is currently leading the Premier League table?",
+      "category": "time_sensitive_explicit",
+      "keywords": [
+        "premier league",
+        "table",
+        "standings"
+      ],
+      "sources": [],
+      "stats": {
+        "failure_reason": "no_extractable_content",
+        "discovered_count": 3,
+        "page_outcomes": [],
+        "discover_ms": 3363.2,
+        "fetch_ms": 138.3,
+        "pages_yielding_chunks": 0,
+        "chunks_extracted": 0
+      },
+      "latency_ms": 3501.6,
+      "error": null
+    },
+    {
+      "id": "ts-06",
+      "query": "What is the latest stable release version of Python?",
+      "category": "time_sensitive_explicit",
+      "keywords": [
+        "python"
+      ],
+      "sources": [
+        {
+          "url": "https://www.reddit.com/r/Python/comments/1qgt083/python_version_in_production/",
+          "title": "Python Version in Production",
+          "snippet": "3.12 / 3.13 / 3.14 (Stable)\n\nSo in production, which version of Python are you using? Apparently I'm using 3.12, but I'm thinking off upgrading to 3.13 ...",
+          "chunk_index": 0,
+          "chunk_text": "Python Version in Production\n\n3.12 / 3.13 / 3.14 (Stable)\n\nSo in production, which version of Python are you using? Apparently I'm using 3.12, but I'm thinking off upgrading to 3.13 ..."
+        },
+        {
+          "url": "https://www.python.org/downloads/",
+          "title": "Download Python",
+          "snippet": "Download the latest version of Python. Download Python 3.14.7. Looking ... Python version Maintenance status First released End of support Release schedule.",
+          "chunk_index": 0,
+          "chunk_text": "Information about specific ports, and developer info\n\nHow to verify your downloaded files are genuine\n\nSigstore verification\n\nStarting with the \nPython 3.11.0\n, \nPython 3.10.7\n, and \nPython 3.9.14\n releases, CPython release artifacts are signed with Sigstore. See our dedicated \nSigstore Information\n page for how it works.\n\nOpenPGP verification\n\nPython versions before 3.14 are also signed using OpenPGP private keys of the respective release manager. In this case, verification through the release manager's public key is also possible.\nSee our dedicated \nOpenPGP Verification\n page for how it work"
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://www.reddit.com/r/Python/comments/1qgt083/python_version_in_production/",
+            "outcome": "snippet_fallback",
+            "text_len": 185,
+            "chunks": 1
+          },
+          {
+            "url": "https://www.python.org/downloads/",
+            "outcome": "extracted",
+            "text_len": 2864,
+            "chunks": 3
+          }
+        ],
+        "discover_ms": 1628.9,
+        "fetch_ms": 337.7,
+        "pages_yielding_chunks": 2,
+        "chunks_extracted": 4,
+        "rank_ms": 1.7,
+        "top_scores": [
+          11.3333,
+          9.8364,
+          7.0858,
+          6.7359
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 2,
+        "total_ms": 1968.4
+      },
+      "latency_ms": 1971.5,
+      "error": null
+    },
+    {
+      "id": "ts-08",
+      "query": "What is the current USD to Japanese Yen exchange rate?",
+      "category": "time_sensitive_explicit",
+      "keywords": [
+        "yen",
+        "jpy",
+        "usd"
+      ],
+      "sources": [
+        {
+          "url": "https://www.xe.com/currencyconverter/convert/?Amount=1&From=USD&To=JPY",
+          "title": "1 USD to JPY - US Dollars to Japanese Yen Exchange Rate",
+          "snippet": "1 USD equals 159.98 JPY using the current mid-market exchange rate of ¥159.98. If you're looking to send 1 USD to JPY, check if Xe could save you money on your ...",
+          "chunk_index": 0,
+          "chunk_text": "The comparison savings are based on a single transfer of GBP 20,000 to USD. Savings are calculated by comparing the exchange rate including margins and fees provided by each bank and Xe on the same day 8/31/2026. The comparison savings provided is true only for the example given and may not include all fees and charges. Different currency exchange amounts, currency types, dates, times, and other individual factors will result in different comparison savings. These results therefore may not be indicative of actual savings and should be used only as a guide. The rate comparison chart is updated "
+        },
+        {
+          "url": "https://wise.com/us/currency-converter/usd-to-jpy-rate",
+          "title": "USD to JPY - Convert US dollars to Japanese yen",
+          "snippet": "Mid-market exchange rate $1 USD = 159.9 JPY Amount currencies to check how the exchange rate changes over time. Average 158.9105 160.6960 Change 1.45% -0.05%",
+          "chunk_index": 0,
+          "chunk_text": "Save money when you send, spend and get paid in over 40+ currencies. All you need, in one account, whenever you need it.\nSave when you spend, send, and get paid\nSave money when you send, spend and get paid in over 40+ currencies. All you need, in one account, whenever you need it.\nManage money on the go globally\nKeep your currencies to hand in one place, and convert them in seconds.\nAn international debit card\nNever worry about exchange rate markups, or high transaction fees when you spend abroad.\nSend money overseas, save on fees\nMake your money go further, no matter the distance."
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://www.revolut.com/en-US/currency-converter/convert-usd-to-jpy-exchange-rate/",
+            "outcome": "fetch_error",
+            "error": "HTTPStatusError"
+          },
+          {
+            "url": "https://wise.com/us/currency-converter/usd-to-jpy-rate",
+            "outcome": "extracted",
+            "text_len": 588,
+            "chunks": 1
+          },
+          {
+            "url": "https://www.xe.com/currencyconverter/convert/?Amount=1&From=USD&To=JPY",
+            "outcome": "extracted",
+            "text_len": 610,
+            "chunks": 1
+          }
+        ],
+        "discover_ms": 1755.0,
+        "fetch_ms": 1580.4,
+        "pages_yielding_chunks": 2,
+        "chunks_extracted": 2,
+        "rank_ms": 1.0,
+        "top_scores": [
+          10.364,
+          5.7155
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 2,
+        "total_ms": 3336.6
+      },
+      "latency_ms": 3339.3,
+      "error": null
+    },
+    {
+      "id": "ru-01",
+      "query": "What is the latest version of the Linux kernel?",
+      "category": "retrieval_useful",
+      "keywords": [
+        "kernel",
+        "linux"
+      ],
+      "sources": [
+        {
+          "url": "https://www.kernel.org/",
+          "title": "The Linux Kernel Archives",
+          "snippet": "The Linux Kernel Archives ; Latest Release ; 7.2.2 · Download ...",
+          "chunk_index": 1,
+          "chunk_text": "[\ntarball\n]\n\n[\npgp\n]\n\n[\npatch\n]\n\n[\ninc. patch\n]\n\n[\nview diff\n]\n\n[\nbrowse\n]\n\n[\nchangelog\n]\n\nlongterm:\n\n5.10.268\n\n2026-08-28\n\n[\ntarball\n]\n\n[\npgp\n]\n\n[\npatch\n]\n\n[\ninc. patch\n]\n\n[\nview diff\n]\n\n[\nbrowse\n]\n\n[\nchangelog\n]\n\nlinux-next:\n\nnext-20260831\n\n2026-08-31\n\n[\nbrowse\n]\n\nOther resources\n\nGit Trees\n\nDocumentation\n\nKernel Mailing Lists\n\nPatchwork\n\nWikis\n\nBugzilla\n\nMirrors\n\nLinux.com\n\nLinux Foundation\n\nSocial\n\nSite Atom feed\n\nReleases Atom Feed\n\nKernel Planet\n\nThis site is operated by the Linux Kernel Organization, a \n501(c)3 nonprofit corporation\n, with support from the following sponsors."
+        },
+        {
+          "url": "https://www.reddit.com/r/linuxquestions/comments/1ly1133/which_distro_uses_the_most_uptodate_kernel/",
+          "title": "Which distro uses the most up-to-date kernel?",
+          "snippet": "I just bought a new laptop and while most things are working fine under Mint 22.1 with 6.11 kernel, there are a couple of things that may be fixed with ...",
+          "chunk_index": 0,
+          "chunk_text": "Which distro uses the most up-to-date kernel?\n\nI just bought a new laptop and while most things are working fine under Mint 22.1 with 6.11 kernel, there are a couple of things that may be fixed with ..."
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://www.reddit.com/r/linuxquestions/comments/1ly1133/which_distro_uses_the_most_uptodate_kernel/",
+            "outcome": "snippet_fallback",
+            "text_len": 202,
+            "chunks": 1
+          },
+          {
+            "url": "https://www.kernel.org/",
+            "outcome": "extracted",
+            "text_len": 2007,
+            "chunks": 2
+          }
+        ],
+        "discover_ms": 1538.4,
+        "fetch_ms": 535.3,
+        "pages_yielding_chunks": 2,
+        "chunks_extracted": 3,
+        "rank_ms": 1.2,
+        "top_scores": [
+          12.5284,
+          11.2881,
+          8.8558
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 2,
+        "total_ms": 2075.1
+      },
+      "latency_ms": 2077.9,
+      "error": null
+    },
+    {
+      "id": "ru-02",
+      "query": "What is the current status of NASA's Artemis program?",
+      "category": "retrieval_useful",
+      "keywords": [
+        "artemis",
+        "nasa"
+      ],
+      "sources": [
+        {
+          "url": "https://www.nasa.gov/humans-in-space/artemis/",
+          "title": "Moon to Mars | NASA's Artemis Program",
+          "snippet": "NASA continues to target the first Artemis lunar landing for 2028, a date that has remained consistent since mid‑2025. After launch, the crew will transfer from ...",
+          "chunk_index": 1,
+          "chunk_text": "NASA continues to target the first Artemis lunar landing for 2028, a date that has remained consistent since mid‑2025. After launch, the crew will transfer from Orion to a commercial human landing system that will transport them to the lunar surface. Beginning with Artemis IV, NASA is standardizing the configuration of the SLS (Space Launch System) rocket.\n\nUsing the standardized configuration of the SLS (Space Launch System) rocket, NASA anticipates launching this lunar surface mission in 2028 and sustaining a cadence of one mission per year thereafter."
+        },
+        {
+          "url": "https://www.nasa.gov/blogs/artemis/",
+          "title": "Artemis",
+          "snippet": "NASA is advancing toward Artemis III's crewed demonstration mission with accelerated, measurable progress across all fronts, outpacing Artemis II integration ...",
+          "chunk_index": 0,
+          "chunk_text": "NASA’s Artemis Core Stage Arrives at Kennedy\nThe largest rocket section for NASA’s Artemis III mission arrived at the agency’s Kennedy Space Center in Florida on April 27. The SLS (Space Launch System) core stage traveled 900 miles on the Pegasus barge from NASA’s Michoud Assembly Facility in New Orleans where the stage is manufactured, to complete assembly of the massive rocket at NASA Kennedy. Teams will transport the top four-fifths of the 212-foot-long core stage, the section containing the liquid hydrogen tank, liquid oxygen tank, intertank, and forward […]"
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://www.nasa.gov/blogs/artemis/",
+            "outcome": "extracted",
+            "text_len": 568,
+            "chunks": 1
+          },
+          {
+            "url": "https://www.nasa.gov/humans-in-space/artemis/",
+            "outcome": "extracted",
+            "text_len": 1721,
+            "chunks": 2
+          }
+        ],
+        "discover_ms": 2004.3,
+        "fetch_ms": 471.9,
+        "pages_yielding_chunks": 2,
+        "chunks_extracted": 3,
+        "rank_ms": 1.1,
+        "top_scores": [
+          10.279,
+          9.8503,
+          6.3306
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 1,
+        "total_ms": 2477.5
+      },
+      "latency_ms": 2477.5,
+      "error": null
+    },
+    {
+      "id": "ru-03",
+      "query": "What is the current inflation rate in the United States?",
+      "category": "retrieval_useful",
+      "keywords": [
+        "inflation",
+        "cpi"
+      ],
+      "sources": [
+        {
+          "url": "https://ycharts.com/indicators/us_inflation_rate",
+          "title": "US Inflation Rate (Monthly) - United States - Historical Da…",
+          "snippet": "US Inflation Rate is at 3.40%, compared to 3.50% last month and 2.70% last year. This is higher than the long term average of 3.28%.",
+          "chunk_index": 0,
+          "chunk_text": "US Inflation Rate (Monthly) - United States - Historical Da…\n\nUS Inflation Rate is at 3.40%, compared to 3.50% last month and 2.70% last year. This is higher than the long term average of 3.28%."
+        },
+        {
+          "url": "https://tradingeconomics.com/united-states/inflation-cpi",
+          "title": "United States Inflation Rate",
+          "snippet": "Inflation Rate in the United States decreased to 3.40 percent in July from 3.50 percent in June of 2026.",
+          "chunk_index": 1,
+          "chunk_text": "Inflation Rate in the United States decreased to 3.40 percent in July from 3.50 percent in June of 2026. Inflation Rate in the United States averaged 3.29 percent from 1914 until 2026, reaching an all time high of 23.70 percent in June of 1920 and a record low of -15.80 percent in June of 1921. This page provides - United States Inflation Rate - actual values, historical data, forecast, chart, statistics, economic calendar and news. United States Inflation Rate - data, historical chart, forecasts and calendar of releases - was last updated on September of 2026.\n\nInflation Rate in the United St"
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://ycharts.com/indicators/us_inflation_rate",
+            "outcome": "snippet_fallback",
+            "text_len": 194,
+            "chunks": 1
+          },
+          {
+            "url": "https://tradingeconomics.com/united-states/inflation-cpi",
+            "outcome": "extracted",
+            "text_len": 2010,
+            "chunks": 2
+          }
+        ],
+        "discover_ms": 2105.7,
+        "fetch_ms": 1023.5,
+        "pages_yielding_chunks": 2,
+        "chunks_extracted": 3,
+        "rank_ms": 1.4,
+        "top_scores": [
+          18.0732,
+          16.8208,
+          10.6704
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 2,
+        "total_ms": 3130.7
+      },
+      "latency_ms": 3134.7,
+      "error": null
+    },
+    {
+      "id": "ru-04",
+      "query": "What is the current state of EU AI Act enforcement?",
+      "category": "retrieval_useful",
+      "keywords": [
+        "ai act",
+        "eu"
+      ],
+      "sources": [],
+      "stats": {
+        "failure_reason": "no_extractable_content",
+        "discovered_count": 3,
+        "page_outcomes": [],
+        "discover_ms": 1983.9,
+        "fetch_ms": 1689.5,
+        "pages_yielding_chunks": 0,
+        "chunks_extracted": 0
+      },
+      "latency_ms": 3676.9,
+      "error": null
+    },
+    {
+      "id": "ru-05",
+      "query": "What is the current world record for the men's marathon?",
+      "category": "retrieval_useful",
+      "keywords": [
+        "marathon",
+        "record"
+      ],
+      "sources": [
+        {
+          "url": "https://en.wikipedia.org/wiki/Marathon_world_record_progression",
+          "title": "Marathon world record progression",
+          "snippet": "Sabastian Sawe set the men's world record of 1:59:30 at the London Marathon on April 26, 2026, becoming the first person in history to run a sub two-hour ...",
+          "chunk_index": 0,
+          "chunk_text": "Sabastian Sawe, the men's marathon world record holder Mary Keitany during her women-only world record run at the 2017 London Marathon with 2:17:01 World records in the marathon are ratified by World Athletics , the international governing body for the sport of athletics . [ 1 ] Sabastian Sawe set the men's world record of 1:59:30 at the London Marathon on April 26, 2026, becoming the first person in history to run a sub two-hour marathon in race conditions. [ 2 ] Kenyan athlete Ruth Chepng'etich broke the women's world record with a time of 2:09:56 on October 13, 2024, at the 2024 Chicago Mar"
+        },
+        {
+          "url": "https://www.runnersworld.com/races-places/a20823734/these-are-the-worlds-fastest-marathoners-and-marathon-courses/",
+          "title": "These Are the World's Fastest Marathoners",
+          "snippet": "10 Fastest Marathons on Record-Eligible Course: Men ; Kelvin Kiptum (Kenya). 2:01:25. 4:37.8 ; Amos Kipruto (Kenya). 2:01:39. 4:38.4 ; Eliud ...",
+          "chunk_index": 0,
+          "chunk_text": "Below you’ll find tables detailing several marathon superlatives: the 10 fastest marathoners in history on record-eligible courses; the 10 fastest American marathoners in history on record-eligible courses; the 10 fastest performances on record-eligible courses; the progression of the world records since 1988. Note that we said “on record-eligible courses.” That’s why Eliud Kipchoge’s 1:59:40 in Vienna isn’t on the list from 2019. That time doesn’t count for record purposes because standard competition rules for pacing and fluids weren’t followed. Similarly, times from the Boston course can’t "
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://en.wikipedia.org/wiki/Marathon_world_record_progression",
+            "outcome": "extracted",
+            "text_len": 5556,
+            "chunks": 1
+          },
+          {
+            "url": "https://www.runnersworld.com/races-places/a20823734/these-are-the-worlds-fastest-marathoners-and-marathon-courses/",
+            "outcome": "extracted",
+            "text_len": 6905,
+            "chunks": 1
+          }
+        ],
+        "discover_ms": 1703.8,
+        "fetch_ms": 1830.3,
+        "pages_yielding_chunks": 2,
+        "chunks_extracted": 2,
+        "rank_ms": 7.9,
+        "top_scores": [
+          8.6896,
+          7.7947
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 2,
+        "total_ms": 3542.1
+      },
+      "latency_ms": 3542.2,
+      "error": null
+    },
+    {
+      "id": "ru-06",
+      "query": "What are the most recently FDA-approved weight loss medications?",
+      "category": "retrieval_useful",
+      "keywords": [
+        "fda",
+        "weight"
+      ],
+      "sources": [],
+      "stats": {
+        "failure_reason": "no_extractable_content",
+        "discovered_count": 3,
+        "page_outcomes": [],
+        "discover_ms": 2681.1,
+        "fetch_ms": 849.5,
+        "pages_yielding_chunks": 0,
+        "chunks_extracted": 0
+      },
+      "latency_ms": 3530.7,
+      "error": null
+    },
+    {
+      "id": "ru-07",
+      "query": "What are the latest discoveries from the James Webb Space Telescope?",
+      "category": "retrieval_useful",
+      "keywords": [
+        "webb",
+        "jwst",
+        "telescope"
+      ],
+      "sources": [
+        {
+          "url": "https://esawebb.org/news/",
+          "title": "Press Releases",
+          "snippet": "Webb reveals dust and water surviving in the extreme environment around the Milky Way's central black hole 11 August 2026",
+          "chunk_index": 0,
+          "chunk_text": "weic2607 — Science Release\n\nWhere is the dividing line between stars and the most massive planets? Scientists think it may depend on how they formed. Was it from a bottom-up approach, gradually growing larger over time, or a top-down approach in which a large collection of gas and dust fragments into smaller, planet-sized bits? Astronomers used the NASA/ESA/CSA James Webb Space Telescope to study an object weighing about 15 times as much as Jupiter, which puts it right on the dividing line between the two processes. They found that the object, called 29 Cygni b, likely formed from the bottom u"
+        },
+        {
+          "url": "https://carnegiescience.edu/six-wild-discoveries-jwst",
+          "title": "Six Wild Discoveries from JWST",
+          "snippet": "1. Our First Look at Moons 't Have an Atmosphere ・ 3. A Lemon Planet That Rains Diamonds ・ 4. Baby Galaxies Speedrunning Star Formation. ...",
+          "chunk_index": 0,
+          "chunk_text": "When the James Webb Space Telescope (JWST) launched on Christmas Day 2021, it promised to revolutionize our view of the cosmos. Three years later, it's delivering in spectacular fashion—from planets that rain diamonds to the chemical fingerprints of cosmic dawn. Carnegie Science astronomers have been at the forefront since Day One—Carnegie's Alan Dressler actually chaired the committee that first conceived the telescope back in the 1990s. Today, Carnegie scientists have led or been a part of more than two dozen JWST research teams (with a whopping 1,328 total allocated observation hours) and h"
+        },
+        {
+          "url": "https://science.nasa.gov/mission/webb/latestnews/",
+          "title": "News",
+          "snippet": "Astronomers using NASA's James Webb Space Telescope have discovered a giant planet outside our solar system, called an exoplanet, hiding… Jul 15, 2026. Article.",
+          "chunk_index": 0,
+          "chunk_text": "News - NASA Science Explore Search News & Events News & Events Recently Published Video Series on NASA+ Podcasts & Audio Blogs Newsletters Social Media Media Resources Multimedia Multimedia NASA+ Images NASA Live NASA Apps Podcasts Image of the Day e-Books 3D Resources Interactives STEM Multimedia NASA Brand & Usage Guidelines NASA+ Search Suggested Searches Climate Change Artemis Expedition 64 Mars perseverance SpaceX Crew-2 International Space Station View All Topics A-Z Home Missions Humans in Space Earth The Solar System The Universe Science Aeronautics Technology Learning Resources About "
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://science.nasa.gov/mission/webb/latestnews/",
+            "outcome": "extracted",
+            "text_len": 6281,
+            "chunks": 1
+          },
+          {
+            "url": "https://carnegiescience.edu/six-wild-discoveries-jwst",
+            "outcome": "extracted",
+            "text_len": 6276,
+            "chunks": 1
+          },
+          {
+            "url": "https://esawebb.org/news/",
+            "outcome": "extracted",
+            "text_len": 683,
+            "chunks": 1
+          }
+        ],
+        "discover_ms": 2025.5,
+        "fetch_ms": 1513.0,
+        "pages_yielding_chunks": 3,
+        "chunks_extracted": 3,
+        "rank_ms": 8.0,
+        "top_scores": [
+          13.5039,
+          9.7469,
+          8.7794
+        ],
+        "selected_count": 3,
+        "selected_unique_urls": 3,
+        "selected_unique_domains": 3,
+        "total_ms": 3546.6
+      },
+      "latency_ms": 3546.7,
+      "error": null
+    },
+    {
+      "id": "trap-06",
+      "query": "Who is the CEO of Twitter?",
+      "category": "routing_traps",
+      "keywords": [
+        "twitter",
+        "x",
+        "ceo"
+      ],
+      "sources": [
+        {
+          "url": "https://apnews.com/article/twitter-musk-new-ceo-a5df68e9a1e5f982368390c73aeabb50",
+          "title": "Twitter's new CEO is an NBCUniversal executive with deep ...",
+          "snippet": "Elon Musk confirmed that the new CEO for Twitter will be NBCUniversal's Linda Yaccarino, an executive with deep ties to the advertising ...",
+          "chunk_index": 6,
+          "chunk_text": "c5e8751fd4154a2fbd4c1b03a6d6fff1\nBantering with Twitter followers late last year, Musk expressed pessimism about the prospects for a new CEO, saying that person “must like pain a lot” to run a company that “has been in the fast lane to bankruptcy.”\n“No one wants the job who can actually keep Twitter alive. There is no successor,” Musk tweeted at the time.\n_______\nAP Business Writers Mae Anderson and Matt O’Brien contributed to this report."
+        },
+        {
+          "url": "https://en.wikipedia.org/wiki/Twitter,_Inc.",
+          "title": "Twitter, Inc.",
+          "snippet": "List of CEOs · Jack Dorsey (2006–2008); first term · Evan Williams (2008–2010) · Dick Costolo (2010–2015) · Jack Dorsey (2015–2021); second term · Parag Agrawal ( ...",
+          "chunk_index": 0,
+          "chunk_text": "This article is about the former company. For the platform formerly known as Twitter, see X (social network) . For that platform's current holding company, see X Corp. Twitter, Inc. was an American social media company based in San Francisco , California, which operated and was named for its flagship social media network of the same name prior to its rebrand as X . In addition to Twitter, the company previously operated the Vine short video app and Periscope livestreaming service. In April 2023, Twitter merged with X Holdings [ 2 ] and ceased to be an independent company, becoming a part of X "
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://apnews.com/article/twitter-musk-new-ceo-a5df68e9a1e5f982368390c73aeabb50",
+            "outcome": "extracted",
+            "text_len": 5918,
+            "chunks": 7
+          },
+          {
+            "url": "https://en.wikipedia.org/wiki/Twitter,_Inc.",
+            "outcome": "extracted",
+            "text_len": 5444,
+            "chunks": 1
+          }
+        ],
+        "discover_ms": 1954.1,
+        "fetch_ms": 2035.2,
+        "pages_yielding_chunks": 2,
+        "chunks_extracted": 8,
+        "rank_ms": 1.3,
+        "top_scores": [
+          10.0115,
+          9.4417,
+          6.6206,
+          6.2574,
+          5.9961,
+          5.8128,
+          3.1817,
+          0.6437
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 2,
+        "total_ms": 3990.7
+      },
+      "latency_ms": 3990.7,
+      "error": null
+    },
+    {
+      "id": "trap-07",
+      "query": "How much does a Tesla Model 3 cost?",
+      "category": "routing_traps",
+      "keywords": [
+        "tesla",
+        "model 3"
+      ],
+      "sources": [
+        {
+          "url": "https://www.reddit.com/r/TeslaLounge/comments/1s3hsx6/tesla_model_3_5_years_later_real_costs_range_and/",
+          "title": "Tesla Model 3 - 5 Years Later: Real Costs, Range, and ...",
+          "snippet": "the car at $39,790. Total = $0.87 per mile, with maintenance, tires, charging, and depreciation accounted for across 6 years.",
+          "chunk_index": 0,
+          "chunk_text": "Tesla Model 3 - 5 Years Later: Real Costs, Range, and ...\n\nthe car at $39,790. Total = $0.87 per mile, with maintenance, tires, charging, and depreciation accounted for across 6 years."
+        },
+        {
+          "url": "https://www.tesla.com/model3",
+          "title": "Model 3 – Sports Electric Sedan",
+          "snippet": "a midsize electric sedan designed for affordability and performance, low running costs. Model 3 Premium & Performance: 1.99% APR Available. Receive 2,000 Free ...",
+          "chunk_index": 0,
+          "chunk_text": "a midsize electric sedan designed for affordability and performance, low running costs. Model 3 Premium & Performance: 1.99% APR Available. Receive 2,000 Free ..."
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://www.reddit.com/r/TeslaLounge/comments/1s3hsx6/tesla_model_3_5_years_later_real_costs_range_and/",
+            "outcome": "snippet_fallback",
+            "text_len": 184,
+            "chunks": 1
+          },
+          {
+            "url": "https://www.edmunds.com/tesla/model-3/",
+            "outcome": "fetch_error",
+            "error": "HTTPStatusError"
+          },
+          {
+            "url": "https://www.tesla.com/model3",
+            "outcome": "fetch_error",
+            "error": "HTTPStatusError"
+          }
+        ],
+        "discover_ms": 1969.3,
+        "fetch_ms": 1973.5,
+        "pages_yielding_chunks": 1,
+        "chunks_extracted": 1,
+        "rank_ms": 0.3,
+        "top_scores": [
+          5.1086
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 2,
+        "total_ms": 3943.1
+      },
+      "latency_ms": 3944.1,
+      "error": null
+    },
+    {
+      "id": "trap-08",
+      "query": "What is the latest iPhone model?",
+      "category": "routing_traps",
+      "keywords": [
+        "iphone"
+      ],
+      "sources": [
+        {
+          "url": "https://www.apple.com/iphone/",
+          "title": "iPhone",
+          "snippet": "Discover iPhone 17 Pro, iPhone Air, iPhone 17, and iPhone 17e, along with iPhone 16. Our latest iPhone models are built for Apple Intelligence, 3 the personal ...",
+          "chunk_index": 1,
+          "chunk_text": "Misplaced your iPhone? The latest Apple Watch models can show you its approximate distance and direction. To set up a group photo on your iPhone, join the group and use Apple Watch as a viewfinder to snap the shot. And when you take a call on your Apple Watch, just tap your iPhone to continue the conversation there.\n\niPhone and AirPods\n\nSet up AirPods on iPhone with just a tap. You’ll love Adaptive Audio, which automatically tailors the noise control for you to provide the best listening experience across different environments and interactions throughout the day."
+        },
+        {
+          "url": "https://www.apple.com/iphone-17/",
+          "title": "iPhone 17",
+          "snippet": "iPhone 17. Center Stage front camera. Latest-generation Ceramic Shield. 6.3-inch ProMotion display. A19 chip. Five gorgeous colors.",
+          "chunk_index": 0,
+          "chunk_text": "Lease a new iPhone with low monthly payments for 12 or 24 months and upgrade at the end of your term with Apple Upgrade. Learn more Get credit toward your next iPhone when you trade in an eligible device. Get credit when you trade in your current smartphone Learn more about trade-in Lavender Colors Colors. Choose from five gorgeous finishes. iPhone 17 shown in Lavender . Colors. Display Display. 6.3-inch Super Retina XDR display — our best ever. 3000 nits peak brightness. ProMotion up to 120Hz. 33% fewer reflections. Ceramic Shield 2 front Ceramic Shield 2 front. Tougher than any smartphone gl"
+        }
+      ],
+      "stats": {
+        "failure_reason": null,
+        "discovered_count": 3,
+        "page_outcomes": [
+          {
+            "url": "https://www.apple.com/iphone-17/",
+            "outcome": "extracted",
+            "text_len": 5648,
+            "chunks": 1
+          },
+          {
+            "url": "https://www.apple.com/iphone/",
+            "outcome": "extracted",
+            "text_len": 1519,
+            "chunks": 2
+          }
+        ],
+        "discover_ms": 1658.1,
+        "fetch_ms": 1864.8,
+        "pages_yielding_chunks": 2,
+        "chunks_extracted": 3,
+        "rank_ms": 1.0,
+        "top_scores": [
+          9.0037,
+          4.2573,
+          2.371
+        ],
+        "selected_count": 2,
+        "selected_unique_urls": 2,
+        "selected_unique_domains": 1,
+        "total_ms": 3524.1
+      },
+      "latency_ms": 3524.8,
+      "error": null
+    }
+  ]
+}

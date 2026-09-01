@@ -1,0 +1,413 @@
+{
+  "version": "1.0",
+  "created": "2026-09-01",
+  "description": "Reproducible routing/retrieval evaluation set for AutoSearch-LLM. Hand-labelled; no auto-generated filler.",
+  "labelling_criterion": {
+    "question": "Does answering this query correctly require information the model cannot reliably hold in its weights?",
+    "search": "Label 'search' when the correct answer depends on information that is either (a) newer than any plausible LLM training cutoff, or (b) volatile enough that a memorised answer is likely stale or wrong (live prices, current officeholders, standings, latest product/software versions, ongoing events, weather).",
+    "direct": "Label 'direct' when the answer is stable knowledge (settled history, definitions, science, mathematics), or is pure reasoning/generation (code, arithmetic, rewriting, explanation) where web retrieval adds latency and cost but no correctness.",
+    "either": "Label 'either' when informed engineers would reasonably disagree - the answer has a stable core but a genuinely drifting surface (e.g. tooling recommendations, cloud pricing ballparks). These cases are EXCLUDED from strict accuracy and reported separately as a bias measurement, because scoring them either way would be arbitrary.",
+    "note_on_surface_form": "The label is decided by the volatility of the ANSWER, never by the presence of temporal words in the QUERY. This is what the 'routing_traps' category exists to test."
+  },
+  "categories": {
+    "time_sensitive_explicit": {
+      "expected_route": "search",
+      "why": "Unambiguously requires live data and says so on the surface. This is the easy case: near-perfect accuracy is expected here, so any failure indicates a severe router defect rather than a tuning issue. Acts as the floor/sanity check for the router."
+    },
+    "timeless_factual": {
+      "expected_route": "direct",
+      "why": "Stable facts whose answers have not changed in years. Retrieval here is pure waste: it adds a Serper call, 3 page fetches and seconds of latency for zero correctness gain. Measures the router's unnecessary-retrieval rate, which is the main cost driver of the system."
+    },
+    "reasoning_or_generation": {
+      "expected_route": "direct",
+      "why": "Code, arithmetic, rewriting and explanation tasks where there is no external fact to look up at all. Separated from timeless_factual because the failure mode is different: retrieving web pages for 'write a SQL query' does not just waste money, it can actively pollute the generation context with irrelevant text."
+    },
+    "ambiguous_borderline": {
+      "expected_route": "either",
+      "why": "Genuinely defensible both ways. Included deliberately so that borderline cases do not silently inflate or deflate the headline accuracy number. Reported as a separate search-rate to reveal whether the router is biased toward over-retrieving or under-retrieving when uncertain."
+    },
+    "retrieval_useful": {
+      "expected_route": "search",
+      "why": "Requires search AND has a well-covered, topically anchored web footprint. These are the cases where the retrieval pipeline should actually succeed, so they form the input set for the retrieval evaluation (Step 4). Separated from time_sensitive_explicit so retrieval quality is measured on queries where good sources are known to exist."
+    },
+    "routing_traps": {
+      "expected_route": "mixed",
+      "why": "Designed to break a router that pattern-matches on surface temporal keywords instead of reasoning about answer volatility. Contains two opposite traps: (1) queries containing years or words like 'current'/'newest' whose answers are settled and stable, which should route direct; (2) queries containing no temporal keyword at all whose answers are highly volatile, which should route search. This is the category that exposes real routing mistakes."
+    }
+  },
+  "retrieval_keywords_note": "For cases with retrieval_eval=true, 'retrieval_keywords' lists topical anchor terms. At least one must appear (case-insensitively) in a retrieved chunk for that source to count as an on-topic hit. This is a WEAK PROXY for relevance, not a relevance judgement: a page can contain the anchor and still be useless, and a genuinely relevant page may phrase things differently. See evaluation/README.md 'Limitations'.",
+  "cases": [
+    {
+      "id": "ts-01",
+      "query": "What is today's weather forecast for London?",
+      "category": "time_sensitive_explicit",
+      "expected_route": "search",
+      "rationale": "Weather is valid for hours; no model can hold this.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "ts-02",
+      "query": "What is the current price of Bitcoin in USD?",
+      "category": "time_sensitive_explicit",
+      "expected_route": "search",
+      "rationale": "Live market price, changes by the second.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["bitcoin", "btc"]
+    },
+    {
+      "id": "ts-03",
+      "query": "What are the latest news headlines about the semiconductor industry this week?",
+      "category": "time_sensitive_explicit",
+      "expected_route": "search",
+      "rationale": "Explicitly scoped to the current week.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "ts-04",
+      "query": "What is the current stock price of NVIDIA?",
+      "category": "time_sensitive_explicit",
+      "expected_route": "search",
+      "rationale": "Live equity price.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["nvidia", "nvda"]
+    },
+    {
+      "id": "ts-05",
+      "query": "Who is currently leading the Premier League table?",
+      "category": "time_sensitive_explicit",
+      "expected_route": "search",
+      "rationale": "League standings change every matchweek.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["premier league", "table", "standings"]
+    },
+    {
+      "id": "ts-06",
+      "query": "What is the latest stable release version of Python?",
+      "category": "time_sensitive_explicit",
+      "expected_route": "search",
+      "rationale": "Version numbers advance on a fixed annual cadence and go stale quickly.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["python"]
+    },
+    {
+      "id": "ts-07",
+      "query": "What major AI model releases were announced in the last month?",
+      "category": "time_sensitive_explicit",
+      "expected_route": "search",
+      "rationale": "Explicit recent window, post-cutoff by construction.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "ts-08",
+      "query": "What is the current USD to Japanese Yen exchange rate?",
+      "category": "time_sensitive_explicit",
+      "expected_route": "search",
+      "rationale": "FX rate, continuously moving.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["yen", "jpy", "usd"]
+    },
+
+    {
+      "id": "tf-01",
+      "query": "What is the capital of France?",
+      "category": "timeless_factual",
+      "expected_route": "direct",
+      "rationale": "Stable for centuries.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "tf-02",
+      "query": "What is the chemical formula for table salt?",
+      "category": "timeless_factual",
+      "expected_route": "direct",
+      "rationale": "Fixed chemistry.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "tf-03",
+      "query": "Explain how photosynthesis works.",
+      "category": "timeless_factual",
+      "expected_route": "direct",
+      "rationale": "Settled textbook biology.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "tf-04",
+      "query": "What is the difference between TCP and UDP?",
+      "category": "timeless_factual",
+      "expected_route": "direct",
+      "rationale": "Protocol semantics fixed since the 1980s.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "tf-05",
+      "query": "Who wrote the novel Pride and Prejudice?",
+      "category": "timeless_factual",
+      "expected_route": "direct",
+      "rationale": "Settled authorship.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "tf-06",
+      "query": "What causes tides on Earth?",
+      "category": "timeless_factual",
+      "expected_route": "direct",
+      "rationale": "Settled physics.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "tf-07",
+      "query": "What is the time complexity of binary search?",
+      "category": "timeless_factual",
+      "expected_route": "direct",
+      "rationale": "Mathematical result, invariant.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "tf-08",
+      "query": "Define Bayes' theorem and state its formula.",
+      "category": "timeless_factual",
+      "expected_route": "direct",
+      "rationale": "Fixed mathematics.",
+      "retrieval_eval": false
+    },
+
+    {
+      "id": "rg-01",
+      "query": "Write a Python function that reverses a singly linked list.",
+      "category": "reasoning_or_generation",
+      "expected_route": "direct",
+      "rationale": "Pure code generation; nothing to look up.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "rg-02",
+      "query": "If a train travels 120 km in 1.5 hours, what is its average speed?",
+      "category": "reasoning_or_generation",
+      "expected_route": "direct",
+      "rationale": "Arithmetic.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "rg-03",
+      "query": "Rewrite this sentence to be more concise: 'Due to the fact that it was raining, we made the decision to cancel the event.'",
+      "category": "reasoning_or_generation",
+      "expected_route": "direct",
+      "rationale": "Text transformation of user-supplied input.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "rg-04",
+      "query": "Explain recursion to a 10-year-old using an analogy.",
+      "category": "reasoning_or_generation",
+      "expected_route": "direct",
+      "rationale": "Explanation task, no external fact required.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "rg-05",
+      "query": "What are the trade-offs between a hash map and a balanced binary search tree?",
+      "category": "reasoning_or_generation",
+      "expected_route": "direct",
+      "rationale": "Stable CS reasoning.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "rg-06",
+      "query": "Write a SQL query to find the second highest salary in an employees table.",
+      "category": "reasoning_or_generation",
+      "expected_route": "direct",
+      "rationale": "Pure code generation.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "rg-07",
+      "query": "My binary search returns -1 for an element that exists in a sorted array. What are the most common causes?",
+      "category": "reasoning_or_generation",
+      "expected_route": "direct",
+      "rationale": "Debugging reasoning over well-known failure modes.",
+      "retrieval_eval": false
+    },
+
+    {
+      "id": "amb-01",
+      "query": "Is React still a good choice for new web projects?",
+      "category": "ambiguous_borderline",
+      "expected_route": "either",
+      "rationale": "Stable core answer, but ecosystem sentiment drifts.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "amb-02",
+      "query": "What are the best practices for securing a REST API?",
+      "category": "ambiguous_borderline",
+      "expected_route": "either",
+      "rationale": "Largely stable, but guidance evolves with new CVEs and standards.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "amb-03",
+      "query": "How much does it cost to run a small web app in the cloud?",
+      "category": "ambiguous_borderline",
+      "expected_route": "either",
+      "rationale": "Ballpark is stable; exact pricing changes.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "amb-04",
+      "query": "What programming language should I learn first?",
+      "category": "ambiguous_borderline",
+      "expected_route": "either",
+      "rationale": "Advice question; defensible without retrieval, but job-market data would help.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "amb-05",
+      "query": "Should I use PostgreSQL or MySQL for a new project?",
+      "category": "ambiguous_borderline",
+      "expected_route": "either",
+      "rationale": "Comparison is stable; feature parity shifts across releases.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "amb-06",
+      "query": "What are common interview questions for a backend engineer role?",
+      "category": "ambiguous_borderline",
+      "expected_route": "either",
+      "rationale": "Classic questions are stable; current hiring trends are not.",
+      "retrieval_eval": false
+    },
+
+    {
+      "id": "ru-01",
+      "query": "What is the latest version of the Linux kernel?",
+      "category": "retrieval_useful",
+      "expected_route": "search",
+      "rationale": "Releases every ~9 weeks; well-covered by kernel.org and news sites.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["kernel", "linux"]
+    },
+    {
+      "id": "ru-02",
+      "query": "What is the current status of NASA's Artemis program?",
+      "category": "retrieval_useful",
+      "expected_route": "search",
+      "rationale": "Active program with frequently updated official pages.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["artemis", "nasa"]
+    },
+    {
+      "id": "ru-03",
+      "query": "What is the current inflation rate in the United States?",
+      "category": "retrieval_useful",
+      "expected_route": "search",
+      "rationale": "Published monthly; strong authoritative sources.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["inflation", "cpi"]
+    },
+    {
+      "id": "ru-04",
+      "query": "What is the current state of EU AI Act enforcement?",
+      "category": "retrieval_useful",
+      "expected_route": "search",
+      "rationale": "Phased obligations with rolling deadlines; heavily covered.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["ai act", "eu"]
+    },
+    {
+      "id": "ru-05",
+      "query": "What is the current world record for the men's marathon?",
+      "category": "retrieval_useful",
+      "expected_route": "search",
+      "rationale": "Broken every few years; well-documented.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["marathon", "record"]
+    },
+    {
+      "id": "ru-06",
+      "query": "What are the most recently FDA-approved weight loss medications?",
+      "category": "retrieval_useful",
+      "expected_route": "search",
+      "rationale": "Regulatory approvals are dated events with official sources.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["fda", "weight"]
+    },
+    {
+      "id": "ru-07",
+      "query": "What are the latest discoveries from the James Webb Space Telescope?",
+      "category": "retrieval_useful",
+      "expected_route": "search",
+      "rationale": "Continuous stream of new results with official press pages.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["webb", "jwst", "telescope"]
+    },
+
+    {
+      "id": "trap-01",
+      "query": "Who won the FIFA World Cup in 2022?",
+      "category": "routing_traps",
+      "expected_route": "direct",
+      "rationale": "TRAP: contains a year, but the result is settled history and pre-cutoff. A keyword-matching router will wrongly search.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "trap-02",
+      "query": "What happened during the Apollo 11 mission in 1969?",
+      "category": "routing_traps",
+      "expected_route": "direct",
+      "rationale": "TRAP: explicit date, entirely historical.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "trap-03",
+      "query": "What were the main causes of the 2008 financial crisis?",
+      "category": "routing_traps",
+      "expected_route": "direct",
+      "rationale": "TRAP: year present, settled economic history.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "trap-04",
+      "query": "What is the current scientific consensus on the age of the universe?",
+      "category": "routing_traps",
+      "expected_route": "direct",
+      "rationale": "TRAP: contains 'current', but the figure (~13.8 billion years) has been stable for over a decade.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "trap-05",
+      "query": "What is the newest element added to the periodic table?",
+      "category": "routing_traps",
+      "expected_route": "direct",
+      "rationale": "TRAP: contains 'newest', but no new element has been named since 2016 and the answer is effectively static.",
+      "retrieval_eval": false
+    },
+    {
+      "id": "trap-06",
+      "query": "Who is the CEO of Twitter?",
+      "category": "routing_traps",
+      "expected_route": "search",
+      "rationale": "REVERSE TRAP: no temporal keyword, but the officeholder and even the company name are volatile. A keyword router will wrongly answer directly from stale memory.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["twitter", "x", "ceo"]
+    },
+    {
+      "id": "trap-07",
+      "query": "How much does a Tesla Model 3 cost?",
+      "category": "routing_traps",
+      "expected_route": "search",
+      "rationale": "REVERSE TRAP: no temporal keyword, but pricing has changed many times per year.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["tesla", "model 3"]
+    },
+    {
+      "id": "trap-08",
+      "query": "What is the latest iPhone model?",
+      "category": "routing_traps",
+      "expected_route": "search",
+      "rationale": "REVERSE TRAP for the opposite reason to trap-05: 'latest' here tracks a reliable annual product cycle, so the memorised answer really does go stale.",
+      "retrieval_eval": true,
+      "retrieval_keywords": ["iphone"]
+    }
+  ]
+}
