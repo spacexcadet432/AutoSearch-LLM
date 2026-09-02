@@ -60,7 +60,7 @@ def test_credential_presence_reports_booleans_only(monkeypatch):
 
 
 def test_query_works_without_request_keys_when_server_configured(monkeypatch):
-    """The EC2 deployment model: caller sends no keys."""
+    """Environment-credential model: caller sends no keys."""
     monkeypatch.setenv("AWS_BEARER_TOKEN_BEDROCK", "server-token")
     monkeypatch.setenv("SERPER_API_KEY", "serper-token")
 

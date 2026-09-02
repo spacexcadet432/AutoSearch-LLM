@@ -13,17 +13,6 @@ venv/
 .pytest_cache/
 *.egg-info/
 
-# --- Node / frontend ---
-node_modules/
-frontend/node_modules/
-frontend/.next/
-frontend/out/
-frontend/dist/
-frontend/.output/
-frontend/.nitro/
-frontend/.vercel/
-frontend/.tanstack/
-
 # --- Local evaluation output (regenerate with the harness) ---
 evaluation/results/*.json
 evaluation/results/*.md

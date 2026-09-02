@@ -1,8 +1,8 @@
 """Application logging setup.
 
-Deliberately plain: a single stream handler writing to stdout, which systemd
-captures into the journal on EC2. No log files to rotate, no external log
-shipper.
+Deliberately plain: a single stream handler writing to stdout. No log files
+to rotate, no external log shipper. The CLI keeps this at WARNING by default so
+answers stay readable; `-v` raises it to INFO.
 
 Secret safety: this module never logs headers, request bodies or credentials.
 Handlers elsewhere log only booleans about credential presence.

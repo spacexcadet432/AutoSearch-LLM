@@ -37,7 +37,7 @@ async def query_endpoint(
     returned, since it can embed request URLs, org ids or key fragments.
     """
     # Request-supplied keys win; otherwise fall back to the server's own
-    # credentials, which is how the EC2 deployment runs.
+    # credentials from the environment, which is how the CLI runs.
     openai_api_key = resolve_llm_key(payload.openai_api_key or x_openai_api_key)
     serper_api_key = resolve_search_key(payload.serper_api_key or x_serper_api_key)
     missing = [

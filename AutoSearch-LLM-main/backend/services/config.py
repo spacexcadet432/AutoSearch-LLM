@@ -197,3 +197,15 @@ def public_config_summary() -> dict:
         "search_cache_ttl_s": search_cache_ttl_s(),
         "search_cache_max_entries": search_cache_max_entries(),
     }
+
+
+def base_url_is_set() -> bool:
+    """Whether an explicit OpenAI-compatible base URL is configured."""
+    return bool((os.getenv("AUTOSEARCH_LLM_BASE_URL") or "").strip())
+
+
+def provider_summary() -> str:
+    """Non-secret 'endpoint :: model' description for CLI output."""
+    base = os.getenv("AUTOSEARCH_LLM_BASE_URL") or "https://api.openai.com/v1"
+    model = os.getenv("AUTOSEARCH_LLM_MODEL") or "gpt-4o-mini"
+    return f"{base} :: {model}"

@@ -44,7 +44,7 @@ async def lifespan(app: FastAPI):
     if config.is_production() and config.allowed_origins() == ["*"]:
         logger.warning(
             "startup: AUTOSEARCH_ALLOWED_ORIGINS is '*' in production; set it to "
-            "your frontend origin(s), e.g. https://<your-app>.vercel.app"
+            "the origin(s) that will call this API"
         )
     try:
         yield

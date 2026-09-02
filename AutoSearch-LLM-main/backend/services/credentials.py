@@ -3,8 +3,8 @@
 Supports both deployment models without changing the API contract:
 
 * **BYO keys** (original behaviour) - the caller supplies keys per request.
-* **Server-side keys** (EC2 deployment) - the instance holds the credentials in
-  environment variables and callers send none.
+* **Environment keys** - credentials come from .env / the environment and the
+  caller supplies none. This is how the CLI runs.
 
 Request-supplied keys always win, so an existing BYO client is unaffected.
 Keys are only ever read, never logged or returned.
@@ -14,8 +14,8 @@ from __future__ import annotations
 
 import os
 
-# Checked in order. The Bedrock bearer token comes first because that is the
-# configured provider for the EC2 deployment.
+# Checked in order. The Bedrock bearer token comes first because Bedrock is
+# the default configured provider.
 _LLM_KEY_ENVS = ("AWS_BEARER_TOKEN_BEDROCK", "OPENAI_API_KEY")
 _SEARCH_KEY_ENVS = ("SERPER_API_KEY",)
 
