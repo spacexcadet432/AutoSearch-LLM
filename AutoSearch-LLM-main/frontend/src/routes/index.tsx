@@ -55,6 +55,14 @@ interface ApiQueryResponse {
   latency: number;
   routing_decision: string;
   confidence?: number | null;
+  // Added by the backend reliability work; optional so older backends still work.
+  retrieval_status?: string | null;
+  grounded?: boolean;
+}
+
+interface ApiHealthResponse {
+  status: string;
+  credentials_configured?: { llm?: boolean; search?: boolean };
 }
 
 interface QueryResult {
@@ -65,6 +73,26 @@ interface QueryResult {
   retrievalTriggered: boolean;
   sources: Source[];
   latencyMs: number;
+  grounded: boolean;
+}
+
+// Mirrors backend retrieval_status values so the UI never implies an answer is
+// source-backed when the backend says it is not.
+function retrievalNote(status: string | null | undefined, grounded: boolean): string {
+  switch (status) {
+    case "ok":
+      return "Answer grounded in retrieved sources.";
+    case "partial":
+      return "Answer grounded, but some sources failed to load.";
+    case "no_useful_results":
+      return "Sources were retrieved but did not support an answer; answered from model knowledge.";
+    case "no_results":
+      return "No usable sources found; answered from model knowledge.";
+    case "failed":
+      return "Web retrieval was unavailable; answered from model knowledge.";
+    default:
+      return grounded ? "Answer grounded in retrieved sources." : "";
+  }
 }
 
 function mapApiToUi(data: ApiQueryResponse): QueryResult {
@@ -84,14 +112,18 @@ function mapApiToUi(data: ApiQueryResponse): QueryResult {
       ? Math.min(1, Math.max(0, data.confidence))
       : 0.75;
 
+  const grounded = Boolean(data.grounded);
+  const note = retrievalNote(data.retrieval_status, grounded);
+
   return {
     answer: data.answer?.trim() || "No answer text returned.",
     mode,
-    reason,
+    reason: note ? `${reason} ${note}` : reason,
     confidence,
     retrievalTriggered: usedSearch,
     sources: mapApiSources(data.sources ?? []),
     latencyMs: Math.max(0, Math.round((data.latency ?? 0) * 1000)),
+    grounded,
   };
 }
 
@@ -127,10 +159,39 @@ function Index() {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<QueryResult | null>(null);
+  const [serverHasKeys, setServerHasKeys] = useState(false);
+  const [backendReachable, setBackendReachable] = useState<boolean | null>(null);
 
   useEffect(() => {
     setOpenaiKey(sessionStorage.getItem(STORAGE_OPENAI) || "");
     setSerperKey(sessionStorage.getItem(STORAGE_SERPER) || "");
+  }, []);
+
+  // The backend may hold its own credentials (server-side deployment), in which
+  // case the user does not need to supply any. /health is cheap and calls no
+  // external API, so this costs nothing.
+  useEffect(() => {
+    const base = backendBaseUrl();
+    if (!base) return;
+    let cancelled = false;
+
+    (async () => {
+      try {
+        const response = await fetch(`${base}/health`);
+        if (!response.ok) return;
+        const health = (await response.json()) as ApiHealthResponse;
+        if (cancelled) return;
+        const creds = health.credentials_configured;
+        setServerHasKeys(Boolean(creds?.llm && creds?.search));
+        setBackendReachable(true);
+      } catch {
+        if (!cancelled) setBackendReachable(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const persistOpenai = useCallback((value: string) => {
@@ -148,8 +209,10 @@ function Index() {
       toast.error("Enter a query first");
       return;
     }
-    if (!openaiKey.trim() || !serperKey.trim()) {
-      toast.error("Both OpenAI and Serper API keys are required");
+    if (!serverHasKeys && (!openaiKey.trim() || !serperKey.trim())) {
+      toast.error("Both API keys are required", {
+        description: "This backend has no server-side keys configured.",
+      });
       return;
     }
 
@@ -165,15 +228,27 @@ function Index() {
     setResult(null);
 
     try {
-      const response = await fetch(`${base}/query`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          query: query.trim(),
-          openai_api_key: openaiKey.trim(),
-          serper_api_key: serperKey.trim(),
-        }),
-      });
+      // Only send keys the user actually supplied; otherwise the backend
+      // falls back to its own configured credentials.
+      const body: Record<string, string> = { query: query.trim() };
+      if (openaiKey.trim()) body.openai_api_key = openaiKey.trim();
+      if (serperKey.trim()) body.serper_api_key = serperKey.trim();
+
+      let response: Response;
+      try {
+        response = await fetch(`${base}/query`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+        setBackendReachable(true);
+      } catch {
+        // fetch only rejects on network/CORS failure, never on an HTTP error.
+        setBackendReachable(false);
+        throw new Error(
+          `Cannot reach the backend at ${base}. Check that it is running and that CORS allows this origin.`,
+        );
+      }
 
       const raw = await response.text();
       let payload: unknown = {};
@@ -212,8 +287,9 @@ function Index() {
     toast.success("Keys cleared from this session");
   }, []);
 
-  const runDisabled =
-    !query.trim() || !openaiKey.trim() || !serperKey.trim() || loading;
+  const keysSatisfied =
+    serverHasKeys || Boolean(openaiKey.trim() && serperKey.trim());
+  const runDisabled = !query.trim() || !keysSatisfied || loading;
 
   return (
     <div className="relative min-h-screen">
@@ -253,9 +329,15 @@ function Index() {
             />
           </div>
           <p className="mt-3 font-mono text-[11px] text-muted-foreground">
-            Keys are stored only for this browser session (sessionStorage) and
-            are sent only to your backend for each request.
+            {serverHasKeys
+              ? "This backend has its own credentials configured — keys are optional. Anything you enter overrides them for your request."
+              : "Keys are stored only for this browser session (sessionStorage) and are sent only to your backend for each request."}
           </p>
+          {backendReachable === false && (
+            <p className="mt-2 font-mono text-[11px] text-destructive">
+              Backend unreachable at {backendBaseUrl() || "(unset)"}.
+            </p>
+          )}
 
           <div className="mt-6">
             <QueryInput value={query} onChange={setQuery} onSubmit={handleRun} />

@@ -38,13 +38,15 @@ def failing_pipeline(monkeypatch):
 
 
 def test_health_endpoint():
-    assert client.get("/health").json() == {"status": "ok"}
+    body = client.get("/health").json()
+    assert body["status"] == "ok"
+    assert "uptime_s" in body and "cache" in body
 
 
 def test_missing_keys_returns_400():
     r = client.post("/query", json={"query": "hello"})
     assert r.status_code == 400
-    assert "required" in r.json()["detail"].lower()
+    assert "missing credentials" in r.json()["detail"].lower()
 
 
 def test_successful_response_shape(monkeypatch):

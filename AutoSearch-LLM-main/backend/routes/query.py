@@ -16,6 +16,7 @@ from openai import (
 )
 
 from backend.models.query import QueryRequest, QueryResponse
+from backend.services.credentials import resolve_llm_key, resolve_search_key
 from backend.services.errors import RetrievalError
 from backend.services.pipeline import run_query_pipeline
 
@@ -35,12 +36,22 @@ async def query_endpoint(
     fixed message. Provider exception text is logged server-side but never
     returned, since it can embed request URLs, org ids or key fragments.
     """
-    openai_api_key = (payload.openai_api_key or x_openai_api_key or "").strip()
-    serper_api_key = (payload.serper_api_key or x_serper_api_key or "").strip()
-    if not openai_api_key or not serper_api_key:
+    # Request-supplied keys win; otherwise fall back to the server's own
+    # credentials, which is how the EC2 deployment runs.
+    openai_api_key = resolve_llm_key(payload.openai_api_key or x_openai_api_key)
+    serper_api_key = resolve_search_key(payload.serper_api_key or x_serper_api_key)
+    missing = [
+        name
+        for name, value in (("LLM", openai_api_key), ("Serper", serper_api_key))
+        if not value
+    ]
+    if missing:
         raise HTTPException(
             status_code=400,
-            detail="Both OpenAI and Serper API keys are required",
+            detail=(
+                f"Missing credentials for: {', '.join(missing)}. Supply them in the "
+                "request or configure them on the server."
+            ),
         )
 
     try:

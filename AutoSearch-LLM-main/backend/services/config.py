@@ -138,3 +138,62 @@ def search_cache_max_entries() -> int:
             minimum=1,
         ),
     )
+
+
+# --- Deployment / runtime ----------------------------------------------
+DEFAULT_ENV = "development"
+
+
+def environment() -> str:
+    """'production' enables production-safe defaults (docs off, strict CORS)."""
+    return (os.getenv("AUTOSEARCH_ENV") or DEFAULT_ENV).strip().lower()
+
+
+def is_production() -> bool:
+    return environment() == "production"
+
+
+def enable_docs() -> bool:
+    """Interactive API docs: on by default, but off in production unless asked.
+
+    /docs and /redoc expose the full schema and a live request console, which
+    is a debugging interface rather than something to serve publicly.
+    """
+    raw = os.getenv("AUTOSEARCH_ENABLE_DOCS")
+    if raw is None or not raw.strip():
+        return not is_production()
+    return raw.strip().lower() in ("1", "true", "yes", "on")
+
+
+def allowed_origins() -> list[str]:
+    """CORS origins. Defaults to '*' for local dev; set explicitly in production."""
+    raw = (os.getenv("AUTOSEARCH_ALLOWED_ORIGINS") or "*").strip()
+    if raw == "*":
+        return ["*"]
+    return [origin.strip() for origin in raw.split(",") if origin.strip()]
+
+
+def bind_host() -> str:
+    return (os.getenv("AUTOSEARCH_HOST") or "0.0.0.0").strip()
+
+
+def bind_port() -> int:
+    return _int("AUTOSEARCH_PORT", 8000, minimum=1)
+
+
+def public_config_summary() -> dict:
+    """Non-secret configuration snapshot for logs and the health endpoint."""
+    return {
+        "environment": environment(),
+        "docs_enabled": enable_docs(),
+        "llm_model": os.getenv("AUTOSEARCH_LLM_MODEL") or "gpt-4o-mini",
+        "llm_base_url": os.getenv("AUTOSEARCH_LLM_BASE_URL") or "https://api.openai.com/v1",
+        "llm_timeout_s": llm_timeout_s(),
+        "search_timeout_s": search_timeout_s(),
+        "fetch_timeout_s": fetch_timeout_s(),
+        "retrieval_deadline_ms": retrieval_deadline_ms(),
+        "fetch_concurrency": fetch_concurrency(),
+        "search_cache_enabled": search_cache_enabled(),
+        "search_cache_ttl_s": search_cache_ttl_s(),
+        "search_cache_max_entries": search_cache_max_entries(),
+    }
